@@ -1,0 +1,49 @@
+﻿services:
+  # 1. SERVICIO DE BASE DE DATOS (PostgreSQL)
+  postgres:
+    image: postgres:15-alpine
+    container_name: staffinity-postgres-db
+    restart: unless-stopped
+    ports:
+      - "5435:5432" # Puerto PC : Puerto Contenedor
+    environment:
+      POSTGRES_DB: StaffinityPersonalDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Healthcheck: Docker verifica cada 5s si la BD responde
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d StaffinityPersonalDb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. SERVICIO DE TU API (.NET)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: staffinity-personal-api
+    depends_on:
+      postgres:
+        condition: service_healthy # ¡Espera a que la BD esté verde antes de iniciar!
+    ports:
+      - "5000:8080" # Tu PC (localhost:5000) -> Contenedor (8080)
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      # IMPORTANTE: Aquí sobrescribimos la conexión para Docker.
+      # Fíjate que el Host es "postgres" (el nombre del servicio de arriba), no localhost.
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=StaffinityPersonalDb;Username=postgres;Password=password123
+    
+    # Healthcheck: Docker pregunta a tu endpoint C# si todo está bien
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="compose.yaml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Staffinity.Personal.Api/Staffinity.Personal.Api.csproj" />
+    <Project Path="src/Staffinity.Personal.Application/Staffinity.Personal.Application.csproj" />
+    <Project Path="src/Staffinity.Personal.Domain/Staffinity.Personal.Domain.csproj" />
+    <Project Path="src/Staffinity.Personal.Infrastructure/Staffinity.Personal.Infrastructure.csproj" />
+  </Folder>
+</Solution>

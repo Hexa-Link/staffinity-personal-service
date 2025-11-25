@@ -1,0 +1,12 @@
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/bin/Debug/net10.0/Staffinity.Personal.Domain.deps.json
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/bin/Debug/net10.0/Staffinity.Personal.Domain.dll
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/bin/Debug/net10.0/Staffinity.Personal.Domain.pdb
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/Staffinity.Personal.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/Staffinity.Personal.Domain.AssemblyInfoInputs.cache
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/Staffinity.Personal.Domain.AssemblyInfo.cs
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/Staffinity.Personal.Domain.csproj.CoreCompileInputs.cache
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/Staffinity.Personal.Domain.sourcelink.json
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/Staffinity.Personal.Domain.dll
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/refint/Staffinity.Personal.Domain.dll
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/Staffinity.Personal.Domain.pdb
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/obj/Debug/net10.0/ref/Staffinity.Personal.Domain.dll
