@@ -1,7 +1,7 @@
 ﻿services:
   # 1. SERVICIO DE BASE DE DATOS (PostgreSQL)
   postgres:
-    image: postgres:15-alpine
+    image: postgres:18
     container_name: staffinity-postgres-db
     restart: unless-stopped
     ports:
@@ -11,7 +11,7 @@
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password123
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_new:/var/lib/postgresql/database
     # Healthcheck: Docker verifica cada 5s si la BD responde
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d StaffinityPersonalDb"]
@@ -46,4 +46,4 @@
       start_period: 10s
 
 volumes:
-  postgres_data:
+  postgres_data_new:

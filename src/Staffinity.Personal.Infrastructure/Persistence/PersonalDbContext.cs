@@ -6,10 +6,5 @@ public class PersonalDbContext(DbContextOptions<PersonalDbContext> options) : Db
 {
     //DbSets place not yet
         
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PersonalDbContext).Assembly);
-        base.OnModelCreating(modelBuilder);
-    }
+
 }
