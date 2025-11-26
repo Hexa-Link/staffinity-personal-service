@@ -1,0 +1,44 @@
+## --- Build Results (Dependencias y compilados) ---
+[Bb]in/
+[Oo]bj/
+
+## --- NuGet Packages ---
+*.nupkg
+# La carpeta packages suele ser local en proyectos antiguos, pero se ignora por si acaso
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+## --- IDE: JetBrains Rider (.idea) ---
+.idea/
+*.sln.iml
+*.suo
+*.user
+*.userprefs
+
+## --- IDE: Visual Studio (.vs) ---
+.vs/
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.pdb
+
+## --- IDE: VS Code (Por si alguien del equipo lo usa) ---
+.vscode/
+
+## --- Configuración y Secretos ---
+# Ignora configuraciones locales de desarrollo que pueden tener claves
+appsettings.Development.json
+.env
+
+## --- OS Files (Basura de sistema operativo) ---
+.DS_Store
+Thumbs.db

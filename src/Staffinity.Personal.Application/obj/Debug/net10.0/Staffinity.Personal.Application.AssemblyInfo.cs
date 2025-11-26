@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Staffinity.Personal.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a5f441ede48fc3adc582d220987740627ddcf018")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+633caaffdd50422d31d81dd203364063c5dee59c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Staffinity.Personal.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Staffinity.Personal.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
