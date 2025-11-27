@@ -2,7 +2,7 @@
 
 namespace Staffinity.Personal.Domain.Modules.Notifications.Ports.In
 {
-    internal interface IGetNotificationByIdUseCase
+    public interface IGetNotificationByIdUseCase
     {
         Task<Notification?> GetByIdAsync(Guid notificationId);
     }

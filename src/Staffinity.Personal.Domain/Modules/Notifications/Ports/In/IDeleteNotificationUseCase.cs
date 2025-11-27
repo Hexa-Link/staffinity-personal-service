@@ -2,7 +2,7 @@
 
 namespace Staffinity.Personal.Domain.Modules.Notifications.Ports.In
 {
-    internal interface IDeleteNotificationUseCase
+    public interface IDeleteNotificationUseCase
     {
         Task<bool> DeleteAsync(Notification notification);
     }
