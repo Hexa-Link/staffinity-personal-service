@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Staffinity.Personal.Domain.Modules.Notifications.Exceptions;
 using Staffinity.Personal.Domain.Modules.Notifications.Model;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
 
@@ -12,29 +14,71 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Notifications
             _dbContext = dbContext;
         }
 
-        public Task<Notification[]> GetAllAsync()
+        public async Task<Notification[]> GetAllAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return NotificationMapper.ToModelList(await _dbContext.Notifications.ToListAsync());
+            }
+            catch (Exception ex)
+            {
+                throw new ResourceNotFoundException("No notifications were found");
+            }
         }
 
-        public Task<Notification?> GetByIdAsync(Guid notificationId)
+        public async Task<Notification?> GetByIdAsync(Guid notificationId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return NotificationMapper.ToModel(await _dbContext.Notifications.FindAsync(notificationId));
+            }
+            catch (Exception ex)
+            {
+                throw new ResourceNotFoundException("The notification was not found");
+            }
         }
 
-        public Task<Notification?> CreateAsync(Notification notification)
+        public async Task<Notification?> CreateAsync(Notification notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var request = _dbContext.Notifications.Add(NotificationMapper.ToEntity(notification));
+                await _dbContext.SaveChangesAsync();
+                return NotificationMapper.ToModel(request.Entity);
+            }
+            catch (Exception ex)
+            {
+                throw new ResourceNotCreatedException("The notification could not be created");
+            }
         }
 
-        public Task<Notification?> UpdateAsync(Notification notification)
+        public async Task<Notification?> UpdateAsync(Notification notification)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var request = _dbContext.Notifications.Update(NotificationMapper.ToEntity(notification));
+                await _dbContext.SaveChangesAsync();
+                return NotificationMapper.ToModel(request.Entity);
+            }
+            catch (Exception ex)
+            {
+                throw new ResourceNotUpdatedException("The notification could not be updated");
+            }
         }
 
-        public Task<bool> DeleteAsync(Guid notificationId)
+        public async Task<bool> DeleteAsync(Guid notificationId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var notification = GetByIdAsync(notificationId);
+                _dbContext.Remove(notification);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new ResourceNotDeletedException("The notification could not be deleted");
+            }
         }
     }
 }

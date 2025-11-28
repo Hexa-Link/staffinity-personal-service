@@ -22,5 +22,28 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Notifications
         [Url(ErrorMessage = "RelatedUrl must be a valid URL")]
         public string RelatedUrl { get; set; }
         public DateTime SendDate { get; set; } = DateTime.UtcNow;
+
+        public NotificationEntity()
+        { }
+
+        public NotificationEntity(Guid employeeId, string message, string relatedUrl)
+        {
+            Id = Guid.NewGuid();
+            EmployeeId = employeeId;
+            Message = message;
+            IsRead = false;
+            RelatedUrl = relatedUrl;
+            SendDate = DateTime.UtcNow;
+        }
+
+        public NotificationEntity(Guid id, Guid employeeId, string message, bool isRead, string relatedUrl, DateTime sendDate)
+        {
+            Id = id;
+            EmployeeId = employeeId;
+            Message = message;
+            IsRead = isRead;
+            RelatedUrl = relatedUrl;
+            SendDate = sendDate;
+        }
     }
 }
