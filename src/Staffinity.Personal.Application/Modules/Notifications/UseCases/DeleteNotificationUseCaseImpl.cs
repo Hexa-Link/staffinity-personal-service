@@ -1,6 +1,4 @@
-﻿using Staffinity.Personal.Domain.Modules.Notifications.Exceptions;
-using Staffinity.Personal.Domain.Modules.Notifications.Model;
-using Staffinity.Personal.Domain.Modules.Notifications.Ports.In;
+﻿using Staffinity.Personal.Domain.Modules.Notifications.Ports.In;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
 
 namespace Staffinity.Personal.Application.Modules.Notifications.UseCases
@@ -9,7 +7,7 @@ namespace Staffinity.Personal.Application.Modules.Notifications.UseCases
     {
         INotificationRepository _notificationRepository;
 
-        DeleteNotificationUseCaseImpl(INotificationRepository notificationRepository)
+        public DeleteNotificationUseCaseImpl(INotificationRepository notificationRepository)
         {
             _notificationRepository = notificationRepository;
         }

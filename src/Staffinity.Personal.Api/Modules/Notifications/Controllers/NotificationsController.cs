@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Staffinity.Personal.Domain.Modules.Notifications.Exceptions;
+using Staffinity.Personal.Domain.Modules.Notifications.Model;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.In;
 
 namespace Staffinity.Personal.Api.Modules.Notifications.Controllers
@@ -16,15 +17,18 @@ namespace Staffinity.Personal.Api.Modules.Notifications.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(Notification[]), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                return StatusCode(200, _getAllNotificationsUseCase.GetAllAsync());
+                var data = await _getAllNotificationsUseCase.GetAllAsync();
+                return Ok(data);
             }
             catch (ResourceNotFoundException ex)
             {
-                return StatusCode(404, ex.Message);
+                return NotFound(ex.Message);
             }
         }
     }

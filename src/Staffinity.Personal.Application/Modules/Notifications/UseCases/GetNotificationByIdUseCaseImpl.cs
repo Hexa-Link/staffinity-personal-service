@@ -8,7 +8,7 @@ namespace Staffinity.Personal.Application.Modules.Notifications.UseCases
     {
         INotificationRepository _notificationRepository;
 
-        GetNotificationByIdUseCaseImpl(INotificationRepository notificationRepository)
+        public GetNotificationByIdUseCaseImpl(INotificationRepository notificationRepository)
         {
             _notificationRepository = notificationRepository;
         }

@@ -1,68 +1,48 @@
-using Staffinity.Personal.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Staffinity.Personal.Application.Modules.Notifications.UseCases;
+using Staffinity.Personal.Domain.Modules.Notifications.Ports.In;
+using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
+using Staffinity.Personal.Infrastructure.Persistence;
+using Staffinity.Personal.Infrastructure.Persistence.Notifications;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//load config database (PostgreSQL)
+// Get connection string to connect to DB
+// TODO: Replace this for environment variables
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Register the DbContext (Necesario para que funcione el HealthCheck de abajo)
+// Register the DbContext
 builder.Services.AddDbContext<PersonalDbContext>(options =>
     options.UseNpgsql(connectionString,
         b => b.MigrationsAssembly("Staffinity.Personal.Infrastructure")));
 
 // Create the healthchecks
-// (Esto configura el servicio ANTES de construir la app)
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<PersonalDbContext>();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-// Si usas Swagger clásico en lugar de OpenAPI nativo, descomenta esto:
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+// Register dependencies
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IGetAllNotificationsUseCase, GetAllNotificationsUseCaseImpl>();
 
-// --- AQUÍ SE CONSTRUYE LA APLICACIÓN ---
-var app = builder.Build(); 
+// Add controllers
+builder.Services.AddControllers();
 
-// Mapping Endpoint in Docker
-// (Esto se hace DESPUÉS de construir la app, usando la variable 'app')
+// Add Swagger services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Build app with all services
+var app = builder.Build();
+
+// Mapping Endpoint
+app.MapControllers();
 app.MapHealthChecks("/health");
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    // app.UseSwagger();
-    // app.UseSwaggerUI();
-}
+// Generate visual documentation
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-// Ejemplo por defecto de .NET (WeatherForecast)
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+// Run the application
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
