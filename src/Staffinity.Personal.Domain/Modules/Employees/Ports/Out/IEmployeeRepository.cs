@@ -1,13 +1,15 @@
+using System;
+using System.Threading.Tasks;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
-using Staffinity.Personal.Domain.Modules.Employees.ValueObjects;
 
 namespace Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
 
-public interface IEmployeeRepository
+internal interface IEmployeeRepository
 {
-    Task CreateAsync(Employee employee);
-
-    Task<Employee?> GetByIdAsync(EmployeeId id);
-
-    Task<IEnumerable<Employee>> GetAllAsync();
+    Task<Employee[]> GetAllAsync();
+    Task<Employee?> GetByIdAsync(Guid employeeId);
+    Task<Employee?> CreateAsync(Employee employee);
+    Task<Employee?> UpdateAsync(Employee employee);
+    Task<bool> DeleteAsync(Guid employeeId);
 }
+

@@ -1,10 +1,9 @@
+using System.Threading.Tasks;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
 
 namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 
-public interface IGetEmployeesUseCase
+internal interface IUpdateEmployeeUseCase
 {
-    Task<IEnumerable<Employee>> GetAllAsync();
-
-    Task<Employee?> GetByIdAsync(Guid id);
+    Task<Employee?> UpdateAsync(Employee employee);
 }
