@@ -4,11 +4,11 @@ using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
 
 namespace Staffinity.Personal.Application.Modules.Notifications.UseCases
 {
-    public class GetAllNotificationUseCaseImpl : IGetAllNotificationsUseCase
+    public class GetAllNotificationsUseCaseImpl : IGetAllNotificationsUseCase
     {
         INotificationRepository _notificationRepository;
 
-        GetAllNotificationUseCaseImpl(INotificationRepository notificationRepository)
+        GetAllNotificationsUseCaseImpl(INotificationRepository notificationRepository)
         {
             _notificationRepository = notificationRepository;
         }
