@@ -4,10 +4,6 @@
     <ProjectReference Include="..\Staffinity.Personal.Domain\Staffinity.Personal.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Modules\Notifications\Dto\" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

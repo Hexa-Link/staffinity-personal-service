@@ -2,7 +2,7 @@
 
 namespace Staffinity.Personal.Domain.Modules.Notifications.Ports.In
 {
-    public interface IEditNotificationUseCase
+    public interface IUpdateNotificationUseCase
     {
         Task<Notification?> EditAsync(Notification notification);
     }
