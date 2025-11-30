@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Staffinity.Personal.Application.Modules.Employees.Dtos;
 using Staffinity.Personal.Application.Modules.Employees.UseCases;
@@ -44,11 +46,13 @@ public class EmployeesController : ControllerBase
             return ValidationProblem(ModelState);
         }
 
+        var passwordHash = HashPassword(request.Password);
+
         var command = new CreateEmployeeCommand(
             request.Code,
             request.Name,
             request.Email,
-            request.PasswordHash,
+            passwordHash,
             request.Phone,
             request.BirthDate,
             request.HireDate,
@@ -98,12 +102,14 @@ public class EmployeesController : ControllerBase
             return ValidationProblem(ModelState);
         }
 
+        var passwordHash = HashPassword(request.Password);
+
         var command = new UpdateEmployeeCommand(
             id,
             request.Code,
             request.Name,
             request.Email,
-            request.PasswordHash,
+            passwordHash,
             request.Phone,
             request.BirthDate,
             request.HireDate,
@@ -149,5 +155,12 @@ public class EmployeesController : ControllerBase
             employee.GenderId,
             employee.StatusId,
             employee.AccessLevelId);
+    }
+
+    private static string HashPassword(string password)
+    {
+        var passwordBytes = Encoding.UTF8.GetBytes(password);
+        var hashBytes = SHA256.HashData(passwordBytes);
+        return Convert.ToBase64String(hashBytes);
     }
 }

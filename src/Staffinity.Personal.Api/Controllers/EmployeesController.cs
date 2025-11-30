@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Staffinity.Personal.Application.Modules.Employees.Dtos;
 using Staffinity.Personal.Application.Modules.Employees.UseCases;
@@ -7,18 +9,27 @@ using Staffinity.Personal.Domain.Modules.Employees.Model;
 namespace Staffinity.Personal.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("employees")]
 public class EmployeesController : ControllerBase
 {
     private readonly CreateEmployeeUseCase _createEmployeeUseCase;
     private readonly GetEmployeesUseCase _getEmployeesUseCase;
+    private readonly GetEmployeeByIdUseCase _getEmployeeByIdUseCase;
+    private readonly UpdateEmployeeUseCase _updateEmployeeUseCase;
+    private readonly DeleteEmployeeUseCase _deleteEmployeeUseCase;
 
     public EmployeesController(
         CreateEmployeeUseCase createEmployeeUseCase,
-        GetEmployeesUseCase getEmployeesUseCase)
+        GetEmployeesUseCase getEmployeesUseCase,
+        GetEmployeeByIdUseCase getEmployeeByIdUseCase,
+        UpdateEmployeeUseCase updateEmployeeUseCase,
+        DeleteEmployeeUseCase deleteEmployeeUseCase)
     {
         _createEmployeeUseCase = createEmployeeUseCase ?? throw new ArgumentNullException(nameof(createEmployeeUseCase));
         _getEmployeesUseCase = getEmployeesUseCase ?? throw new ArgumentNullException(nameof(getEmployeesUseCase));
+        _getEmployeeByIdUseCase = getEmployeeByIdUseCase ?? throw new ArgumentNullException(nameof(getEmployeeByIdUseCase));
+        _updateEmployeeUseCase = updateEmployeeUseCase ?? throw new ArgumentNullException(nameof(updateEmployeeUseCase));
+        _deleteEmployeeUseCase = deleteEmployeeUseCase ?? throw new ArgumentNullException(nameof(deleteEmployeeUseCase));
     }
 
     [HttpPost]
@@ -29,11 +40,18 @@ public class EmployeesController : ControllerBase
             return BadRequest("Request body is required.");
         }
 
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var passwordHash = HashPassword(request.Password);
+
         var command = new CreateEmployeeCommand(
             request.Code,
             request.Name,
             request.Email,
-            request.Password, // TODO: apply real password hashing here
+            passwordHash,
             request.Phone,
             request.BirthDate,
             request.HireDate,
@@ -48,7 +66,7 @@ public class EmployeesController : ControllerBase
         var employee = await _createEmployeeUseCase.ExecuteAsync(command).ConfigureAwait(false);
 
         var response = MapToResponse(employee);
-        return Ok(response);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
     [HttpGet]
@@ -57,6 +75,66 @@ public class EmployeesController : ControllerBase
         var employees = await _getEmployeesUseCase.ExecuteAsync().ConfigureAwait(false);
         var responses = employees.Select(MapToResponse).ToArray();
         return Ok(responses);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var employee = await _getEmployeeByIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
+        if (employee is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(MapToResponse(employee));
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateEmployeeRequest request)
+    {
+        if (request is null)
+        {
+            return BadRequest("Request body is required.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var passwordHash = HashPassword(request.Password);
+
+        var command = new UpdateEmployeeCommand(
+            id,
+            request.Code,
+            request.Name,
+            request.Email,
+            passwordHash,
+            request.Phone,
+            request.BirthDate,
+            request.HireDate,
+            request.IdentificationTypeId,
+            request.IdentificationNumber,
+            request.ManagerId,
+            request.HeadquartersId,
+            request.GenderId,
+            request.StatusId,
+            request.AccessLevelId);
+
+        var employee = await _updateEmployeeUseCase.ExecuteAsync(command).ConfigureAwait(false);
+        return Ok(MapToResponse(employee));
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var deleted = await _deleteEmployeeUseCase.ExecuteAsync(id).ConfigureAwait(false);
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 
     private static EmployeeResponse MapToResponse(Employee employee)
@@ -76,5 +154,12 @@ public class EmployeesController : ControllerBase
             employee.GenderId,
             employee.StatusId,
             employee.AccessLevelId);
+    }
+
+    private static string HashPassword(string password)
+    {
+        var passwordBytes = Encoding.UTF8.GetBytes(password);
+        var hashBytes = SHA256.HashData(passwordBytes);
+        return Convert.ToBase64String(hashBytes);
     }
 }
