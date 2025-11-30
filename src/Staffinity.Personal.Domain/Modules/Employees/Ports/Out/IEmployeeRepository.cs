@@ -4,7 +4,7 @@ using Staffinity.Personal.Domain.Modules.Employees.Model;
 
 namespace Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
 
-internal interface IEmployeeRepository
+public interface IEmployeeRepository
 {
     Task<Employee[]> GetAllAsync();
     Task<Employee?> GetByIdAsync(Guid employeeId);
