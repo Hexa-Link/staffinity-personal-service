@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Staffinity.Personal.Application.Modules.Employees.Dtos;
 
-public class CreateEmployeeRequest
+public class UpdateEmployeeRequest
 {
     [Required]
     public string Code { get; set; }
