@@ -1,25 +1,51 @@
-﻿using Staffinity.Personal.Domain.Modules.Notifications.Model;
+﻿using Staffinity.Personal.Application.Modules.Notifications.Dto;
+using Staffinity.Personal.Domain.Modules.Notifications.Model;
 
 namespace Staffinity.Personal.Infrastructure.Persistence.Notifications
 {
-    internal static class NotificationMapper
+    public static class NotificationMapper
     {
         public static Notification ToModel(NotificationEntity notification)
         {
             return new Notification(
                 notification.Id,
-                notification.EmployeeId,
+                notification.RecipientId,
+                notification.Title,
                 notification.Message,
                 notification.IsRead,
                 notification.RelatedUrl,
                 notification.SendDate);
         }
 
+        public static Notification CreateRequestToModel(CreateNotificationRequest notification)
+        {
+            return new Notification(
+                notification.RecipientId,
+                notification.Title,
+                notification.Message,
+                notification.IsRead ?? false,
+                notification.RelatedUrl,
+                notification.SendDate ?? DateTime.UtcNow);
+        }
+
+        public static Notification UpdateRequestToModel(UpdateNotificationRequest notification)
+        {
+            return new Notification(
+                notification.Id,
+                notification.RecipientId,
+                notification.Title,
+                notification.Message,
+                notification.IsRead ?? false,
+                notification.RelatedUrl,
+                notification.SendDate ?? DateTime.UtcNow);
+        }
+
         public static NotificationEntity ToEntity(Notification notification)
         {
             return new NotificationEntity(
                 notification.Id,
-                notification.EmployeeId,
+                notification.RecipientId,
+                notification.Title,
                 notification.Message,
                 notification.IsRead,
                 notification.RelatedUrl,

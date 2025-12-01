@@ -15,19 +15,19 @@ namespace Staffinity.Personal.Application.Modules.Notifications.UseCases
 
         public Task<Notification?> CreateAsync(Notification notification)
         {
-            if (notification.EmployeeId == null || notification.EmployeeId == Guid.Empty)
+            if (notification.RecipientId == null || notification.RecipientId == Guid.Empty)
             {
                 throw new ArgumentNullException("Employee Id cannot be null or empty");
+            }
+
+            if (String.IsNullOrEmpty(notification.Title))
+            {
+                throw new ArgumentNullException("Notification title cannot be null or empty");
             }
 
             if (String.IsNullOrEmpty(notification.Message))
             {
                 throw new ArgumentNullException("Notification message cannot be null or empty");
-            }
-
-            if (String.IsNullOrEmpty(notification.RelatedUrl))
-            {
-                throw new ArgumentNullException("Related Url cannot be null or empty");
             }
 
             return _notificationRepository.CreateAsync(notification);
