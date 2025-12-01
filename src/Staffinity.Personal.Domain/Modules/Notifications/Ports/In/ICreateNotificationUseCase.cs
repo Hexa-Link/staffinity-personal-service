@@ -2,7 +2,7 @@
 
 namespace Staffinity.Personal.Domain.Modules.Notifications.Ports.In
 {
-    internal interface ICreateNotificationUseCase
+    public interface ICreateNotificationUseCase
     {
         Task<Notification?> CreateAsync(Notification notification);
     }
