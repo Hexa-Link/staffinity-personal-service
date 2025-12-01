@@ -36,6 +36,7 @@ namespace Staffinity.Personal.Api.Modules.Notifications.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Notification), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(string id)
         {
