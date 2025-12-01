@@ -1,26 +1,33 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Staffinity.Personal.Infrastructure.Persistence.Notifications
 {
+    [Table("notifications")]
     public class NotificationEntity
     {
+        [Column("notification_id")]
         [Key]
         public Guid Id { get; set; }
 
+        [Column("recipient_id")]
         [Required(ErrorMessage = "EmployeeId is required")]
         public Guid EmployeeId { get; set; }
 
+        [Column("message")]
         [Required(ErrorMessage = "Message cannot be empty")]
         [MaxLength(255, ErrorMessage = "Message is too large, 255 characters maximum")]
         [MinLength(5, ErrorMessage = "Message is too short, 5 characters minimum")]
         public string Message { get; set; }
 
+        [Column("is_read")]
         public bool IsRead { get; set; } = false;
 
-        [Required(ErrorMessage = "RelatedUrl is required")]
+        [Column("related_url")]
         [MaxLength(500, ErrorMessage = "RelatedUrl is too long, 500 characters maximum")]
-        [Url(ErrorMessage = "RelatedUrl must be a valid URL")]
-        public string RelatedUrl { get; set; }
+        public string? RelatedUrl { get; set; }
+
+        [Column("sent_date")]
         public DateTime SendDate { get; set; } = DateTime.UtcNow;
 
         public NotificationEntity()
