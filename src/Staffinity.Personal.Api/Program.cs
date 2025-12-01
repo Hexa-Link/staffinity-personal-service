@@ -23,6 +23,7 @@ builder.Services.AddHealthChecks()
 // Register dependencies
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IGetAllNotificationsUseCase, GetAllNotificationsUseCaseImpl>();
+builder.Services.AddScoped<IGetNotificationByIdUseCase, GetNotificationByIdUseCaseImpl>();
 
 // Add controllers
 builder.Services.AddControllers();
