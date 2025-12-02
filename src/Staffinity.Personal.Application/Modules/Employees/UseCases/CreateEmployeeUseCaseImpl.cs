@@ -6,7 +6,7 @@ using Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
 
 namespace Staffinity.Personal.Application.Modules.Employees.UseCases;
 
-public class CreateEmployeeUseCase
+public class CreateEmployeeUseCase 
 {
     private readonly IEmployeeRepository _employeeRepository;
 
