@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net.Mail;
 using Staffinity.Personal.Domain.Modules.Employees.Exceptions;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
@@ -6,42 +7,74 @@ using Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
 
 namespace Staffinity.Personal.Application.Modules.Employees.UseCases;
 
-public class CreateEmployeeUseCaseImpl : ICreateEmployeeUseCase
+public class UpdateEmployeeUseCaseImpl : IUpdateEmployeeUseCase
 {
     private readonly IEmployeeRepository _employeeRepository;
 
-    public CreateEmployeeUseCaseImpl(IEmployeeRepository employeeRepository)
+    public UpdateEmployeeUseCaseImpl(IEmployeeRepository employeeRepository)
     {
         _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
     }
 
-    public async Task<Employee?> CreateAsync(Employee employee)
+    public async Task<Employee?> UpdateAsync(Employee employee)
     {
         ArgumentNullException.ThrowIfNull(employee);
         ValidateEmployee(employee);
 
-        var existingEmployees = await _employeeRepository.GetAllAsync().ConfigureAwait(false)
-                               ?? Array.Empty<Employee>();
+        // Buscar el empleado existente
+        var existing = await _employeeRepository.GetByIdAsync(employee.Id)
+            .ConfigureAwait(false);
 
-        if (existingEmployees.Any(e =>
-            string.Equals(e.Email, employee.Email, StringComparison.OrdinalIgnoreCase)))
+        if (existing is null)
+            throw new InvalidOperationException("Employee not found.");
+
+        // Validar duplicado de email
+        var allEmployees = await _employeeRepository.GetAllAsync().ConfigureAwait(false)
+                           ?? Array.Empty<Employee>();
+
+        if (allEmployees.Any(e =>
+                e.Id != employee.Id &&
+                string.Equals(e.Email, employee.Email, StringComparison.OrdinalIgnoreCase)))
         {
             throw new InvalidValueException($"An employee with email '{employee.Email}' already exists.");
         }
 
-        var createdEmployee = await _employeeRepository.CreateAsync(employee)
+        // Construir el empleado actualizado
+        var updatedEmployee = new Employee(
+            existing.Id,
+            employee.Code,
+            employee.Name,
+            employee.Email,
+            employee.PasswordHash,
+            employee.Phone,
+            employee.BirthDate,
+            employee.HireDate,
+            employee.IdentificationTypeId,
+            employee.IdentificationNumber,
+            employee.ManagerId,
+            employee.HeadquartersId,
+            employee.GenderId,
+            employee.StatusId,
+            employee.AccessLevelId,
+            existing.CreatedAt,
+            DateTimeOffset.UtcNow,
+            existing.IsDeleted
+        );
+
+        var savedEmployee = await _employeeRepository.UpdateAsync(updatedEmployee)
             .ConfigureAwait(false);
 
-        if (createdEmployee is null)
-        {
-            throw new InvalidOperationException("Employee could not be created.");
-        }
+        if (savedEmployee is null)
+            throw new InvalidOperationException("Employee could not be updated.");
 
-        return createdEmployee;
+        return savedEmployee;
     }
 
     private static void ValidateEmployee(Employee employee)
     {
+        if (employee.Id == Guid.Empty)
+            throw new InvalidValueException("Employee id is required.");
+
         if (string.IsNullOrWhiteSpace(employee.Code))
             throw new InvalidValueException("Code is required.");
 
@@ -52,7 +85,10 @@ public class CreateEmployeeUseCaseImpl : ICreateEmployeeUseCase
             throw new InvalidValueException("Email is required.");
 
         if (!IsValidEmail(employee.Email))
-            throw new InvalidValueException("Email format is invalid.");
+            throw new InvalidValueException("Invalid email format.");
+
+        if (string.IsNullOrWhiteSpace(employee.PasswordHash))
+            throw new InvalidValueException("Password hash is required.");
 
         if (string.IsNullOrWhiteSpace(employee.Phone))
             throw new InvalidValueException("Phone is required.");
@@ -73,13 +109,13 @@ public class CreateEmployeeUseCaseImpl : ICreateEmployeeUseCase
             throw new InvalidValueException("Status is required.");
 
         if (employee.AccessLevelId == Guid.Empty)
-            throw new InvalidValueException("Position (access level) is required.");
+            throw new InvalidValueException("Access level is required.");
 
         if (employee.BirthDate > DateOnly.FromDateTime(DateTime.UtcNow))
             throw new InvalidValueException("Birth date cannot be in the future.");
 
         if (employee.HireDate < employee.BirthDate)
-            throw new InvalidValueException("Hire date cannot be earlier than birth date.");
+            throw new InvalidValueException("Hire date cannot be before birth date.");
     }
 
     private static bool IsValidEmail(string email)

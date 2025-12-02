@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Staffinity.Personal.Application.Modules.Employees.UseCases;
 using Staffinity.Personal.Application.Modules.Notifications.UseCases;
+using Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 using Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.In;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
@@ -31,12 +32,11 @@ builder.Services.AddScoped<ICreateNotificationUseCase, CreateNotificationUseCase
 builder.Services.AddScoped<IUpdateNotificationUseCase, UpdateNotificationUseCaseImpl>();
 builder.Services.AddScoped<IDeleteNotificationUseCase, DeleteNotificationUseCaseImpl>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<GetEmployeesUseCase>();
-builder.Services.AddScoped<GetEmployeeByIdUseCase>();
-builder.Services.AddScoped<CreateEmployeeUseCase>();
-builder.Services.AddScoped<UpdateEmployeeUseCase>();
-builder.Services.AddScoped<DeleteEmployeeUseCase>();
-
+builder.Services.AddScoped<IGetAllEmployeesUseCase, GetAllEmployeesUseCaseImpl>();
+builder.Services.AddScoped<IGetEmployeeByIdUseCase, GetEmployeeByIdUseCaseImpl>();
+builder.Services.AddScoped<ICreateEmployeeUseCase, CreateEmployeeUseCaseImpl>();
+builder.Services.AddScoped<IUpdateEmployeeUseCase, UpdateEmployeeUseCaseImpl>();
+builder.Services.AddScoped<IDeleteEmployeeUseCase, DeleteEmployeeUseCaseImpl>();
 // Add controllers
 builder.Services.AddControllers();
 

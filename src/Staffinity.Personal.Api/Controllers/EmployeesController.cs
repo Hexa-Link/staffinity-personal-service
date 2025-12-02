@@ -11,18 +11,18 @@ namespace Staffinity.Personal.Api.Controllers;
 [Route("employees")]
 public class EmployeesController : ControllerBase
 {
-    private readonly CreateEmployeeUseCase _createEmployeeUseCase;
-    private readonly GetEmployeesUseCase _getEmployeesUseCase;
-    private readonly GetEmployeeByIdUseCase _getEmployeeByIdUseCase;
-    private readonly UpdateEmployeeUseCase _updateEmployeeUseCase;
-    private readonly DeleteEmployeeUseCase _deleteEmployeeUseCase;
+    private readonly CreateEmployeeUseCaseImpl _createEmployeeUseCase;
+    private readonly GetAllEmployeesUseCaseImpl _getEmployeesUseCase;
+    private readonly GetEmployeeByIdUseCaseImpl _getEmployeeByIdUseCase;
+    private readonly UpdateEmployeeUseCaseImpl _updateEmployeeUseCase;
+    private readonly DeleteEmployeeUseCaseImpl _deleteEmployeeUseCase;
 
     public EmployeesController(
-        CreateEmployeeUseCase createEmployeeUseCase,
-        GetEmployeesUseCase getEmployeesUseCase,
-        GetEmployeeByIdUseCase getEmployeeByIdUseCase,
-        UpdateEmployeeUseCase updateEmployeeUseCase,
-        DeleteEmployeeUseCase deleteEmployeeUseCase)
+        CreateEmployeeUseCaseImpl createEmployeeUseCase,
+        GetAllEmployeesUseCaseImpl getEmployeesUseCase,
+        GetEmployeeByIdUseCaseImpl getEmployeeByIdUseCase,
+        UpdateEmployeeUseCaseImpl updateEmployeeUseCase,
+        DeleteEmployeeUseCaseImpl deleteEmployeeUseCase)
     {
         _createEmployeeUseCase = createEmployeeUseCase;
         _getEmployeesUseCase = getEmployeesUseCase;
@@ -30,11 +30,10 @@ public class EmployeesController : ControllerBase
         _updateEmployeeUseCase = updateEmployeeUseCase;
         _deleteEmployeeUseCase = deleteEmployeeUseCase;
     }
-    
+
     [HttpPost]
     [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeRequest request)
     {
         if (request is null)
@@ -45,7 +44,10 @@ public class EmployeesController : ControllerBase
 
         var passwordHash = HashPassword(request.Password);
 
-        var command = new CreateEmployeeCommand(
+        var now = DateTimeOffset.UtcNow;
+
+        var employee = new Employee(
+            Guid.NewGuid(),
             request.Code,
             request.Name,
             request.Email,
@@ -59,30 +61,39 @@ public class EmployeesController : ControllerBase
             request.HeadquartersId,
             request.GenderId,
             request.StatusId,
-            request.AccessLevelId
+            request.AccessLevelId,
+            now,       // createdAt
+            now,       // updatedAt (no null)
+            false      // isDeleted
         );
 
-        var employee = await _createEmployeeUseCase.ExecuteAsync(command);
-        var response = MapToResponse(employee);
+        var createdEmployee = await _createEmployeeUseCase.CreateAsync(employee);
+
+        if (createdEmployee is null)
+            // No pudo crearse por alguna razón, devuelve 500 (o maneja según tu política)
+            return StatusCode(StatusCodes.Status500InternalServerError, "Employee could not be created.");
+
+        var response = MapToResponse(createdEmployee);
 
         return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
-    
+
     [HttpGet]
     [ProducesResponseType(typeof(EmployeeResponse[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
     {
-        var employees = await _getEmployeesUseCase.ExecuteAsync();
+        var employees = await _getEmployeesUseCase.GetAllAsync();
         var responses = employees.Select(MapToResponse).ToArray();
         return Ok(responses);
     }
-    
+
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var employee = await _getEmployeeByIdUseCase.ExecuteAsync(id);
+        var employee = await _getEmployeeByIdUseCase.GetByIdAsync(id);
 
         if (employee is null)
             return NotFound();
@@ -93,7 +104,7 @@ public class EmployeesController : ControllerBase
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateEmployeeRequest request)
     {
         if (request is null)
@@ -103,8 +114,9 @@ public class EmployeesController : ControllerBase
             return ValidationProblem(ModelState);
 
         var passwordHash = HashPassword(request.Password);
+        var now = DateTimeOffset.UtcNow;
 
-        var command = new UpdateEmployeeCommand(
+        var employee = new Employee(
             id,
             request.Code,
             request.Name,
@@ -119,26 +131,35 @@ public class EmployeesController : ControllerBase
             request.HeadquartersId,
             request.GenderId,
             request.StatusId,
-            request.AccessLevelId
+            request.AccessLevelId,
+            now,  
+            now,   
+            false  
         );
 
-        var employee = await _updateEmployeeUseCase.ExecuteAsync(command);
-        return Ok(MapToResponse(employee));
+        var updatedEmployee = await _updateEmployeeUseCase.UpdateAsync(employee);
+
+        if (updatedEmployee is null)
+            return NotFound();
+
+        return Ok(MapToResponse(updatedEmployee));
     }
-    
+
+
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var deleted = await _deleteEmployeeUseCase.ExecuteAsync(id);
+        var deleted = await _deleteEmployeeUseCase.DeleteAsync(id);
 
         if (!deleted)
             return NotFound();
 
         return NoContent();
     }
-    
+
+
     private static EmployeeResponse MapToResponse(Employee employee)
     {
         return new EmployeeResponse(
