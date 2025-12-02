@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
@@ -25,25 +24,24 @@ public class EmployeesController : ControllerBase
         UpdateEmployeeUseCase updateEmployeeUseCase,
         DeleteEmployeeUseCase deleteEmployeeUseCase)
     {
-        _createEmployeeUseCase = createEmployeeUseCase ?? throw new ArgumentNullException(nameof(createEmployeeUseCase));
-        _getEmployeesUseCase = getEmployeesUseCase ?? throw new ArgumentNullException(nameof(getEmployeesUseCase));
-        _getEmployeeByIdUseCase = getEmployeeByIdUseCase ?? throw new ArgumentNullException(nameof(getEmployeeByIdUseCase));
-        _updateEmployeeUseCase = updateEmployeeUseCase ?? throw new ArgumentNullException(nameof(updateEmployeeUseCase));
-        _deleteEmployeeUseCase = deleteEmployeeUseCase ?? throw new ArgumentNullException(nameof(deleteEmployeeUseCase));
+        _createEmployeeUseCase = createEmployeeUseCase;
+        _getEmployeesUseCase = getEmployeesUseCase;
+        _getEmployeeByIdUseCase = getEmployeeByIdUseCase;
+        _updateEmployeeUseCase = updateEmployeeUseCase;
+        _deleteEmployeeUseCase = deleteEmployeeUseCase;
     }
-
+    
     [HttpPost]
+    [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeRequest request)
     {
         if (request is null)
-        {
             return BadRequest("Request body is required.");
-        }
 
         if (!ModelState.IsValid)
-        {
             return ValidationProblem(ModelState);
-        }
 
         var passwordHash = HashPassword(request.Password);
 
@@ -61,46 +59,48 @@ public class EmployeesController : ControllerBase
             request.HeadquartersId,
             request.GenderId,
             request.StatusId,
-            request.AccessLevelId);
+            request.AccessLevelId
+        );
 
-        var employee = await _createEmployeeUseCase.ExecuteAsync(command).ConfigureAwait(false);
-
+        var employee = await _createEmployeeUseCase.ExecuteAsync(command);
         var response = MapToResponse(employee);
+
         return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
-
+    
     [HttpGet]
+    [ProducesResponseType(typeof(EmployeeResponse[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
     {
-        var employees = await _getEmployeesUseCase.ExecuteAsync().ConfigureAwait(false);
+        var employees = await _getEmployeesUseCase.ExecuteAsync();
         var responses = employees.Select(MapToResponse).ToArray();
         return Ok(responses);
     }
-
+    
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var employee = await _getEmployeeByIdUseCase.ExecuteAsync(id).ConfigureAwait(false);
+        var employee = await _getEmployeeByIdUseCase.ExecuteAsync(id);
+
         if (employee is null)
-        {
             return NotFound();
-        }
 
         return Ok(MapToResponse(employee));
     }
 
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateEmployeeRequest request)
     {
         if (request is null)
-        {
             return BadRequest("Request body is required.");
-        }
 
         if (!ModelState.IsValid)
-        {
             return ValidationProblem(ModelState);
-        }
 
         var passwordHash = HashPassword(request.Password);
 
@@ -119,24 +119,26 @@ public class EmployeesController : ControllerBase
             request.HeadquartersId,
             request.GenderId,
             request.StatusId,
-            request.AccessLevelId);
+            request.AccessLevelId
+        );
 
-        var employee = await _updateEmployeeUseCase.ExecuteAsync(command).ConfigureAwait(false);
+        var employee = await _updateEmployeeUseCase.ExecuteAsync(command);
         return Ok(MapToResponse(employee));
     }
-
+    
     [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var deleted = await _deleteEmployeeUseCase.ExecuteAsync(id).ConfigureAwait(false);
+        var deleted = await _deleteEmployeeUseCase.ExecuteAsync(id);
+
         if (!deleted)
-        {
             return NotFound();
-        }
 
         return NoContent();
     }
-
+    
     private static EmployeeResponse MapToResponse(Employee employee)
     {
         return new EmployeeResponse(
@@ -153,13 +155,14 @@ public class EmployeesController : ControllerBase
             employee.HeadquartersId,
             employee.GenderId,
             employee.StatusId,
-            employee.AccessLevelId);
+            employee.AccessLevelId
+        );
     }
 
     private static string HashPassword(string password)
     {
-        var passwordBytes = Encoding.UTF8.GetBytes(password);
-        var hashBytes = SHA256.HashData(passwordBytes);
+        var bytes = Encoding.UTF8.GetBytes(password);
+        var hashBytes = SHA256.HashData(bytes);
         return Convert.ToBase64String(hashBytes);
     }
 }
