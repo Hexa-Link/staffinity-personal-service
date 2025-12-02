@@ -2,7 +2,7 @@
 
 namespace Staffinity.Personal.Domain.Modules.Notifications.Ports.Out
 {
-    internal interface INotificationRepository
+    public interface INotificationRepository
     {
         Task<Notification[]> GetAllAsync();
         Task<Notification?> GetByIdAsync(Guid notificationId);
