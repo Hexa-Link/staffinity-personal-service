@@ -1,6 +1,5 @@
 using System.Linq;
-using System.Net.Mail;
-using Staffinity.Personal.Domain.Modules.Employees.Exceptions;
+using FluentValidation;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
 using Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 using Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
@@ -10,25 +9,50 @@ namespace Staffinity.Personal.Application.Modules.Employees.UseCases;
 public class UpdateEmployeeUseCaseImpl : IUpdateEmployeeUseCase
 {
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IValidator<Employee> _validator;
 
-    public UpdateEmployeeUseCaseImpl(IEmployeeRepository employeeRepository)
+    public UpdateEmployeeUseCaseImpl(
+        IEmployeeRepository employeeRepository,
+        IValidator<Employee> validator)
     {
-        _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+        _employeeRepository = employeeRepository
+            ?? throw new ArgumentNullException(nameof(employeeRepository));
+        _validator = validator
+            ?? throw new ArgumentNullException(nameof(validator));
     }
 
     public async Task<Employee?> UpdateAsync(Employee employee)
     {
-        ArgumentNullException.ThrowIfNull(employee);
-        ValidateEmployee(employee);
+        if (employee is null)
+        {
+            Console.WriteLine("Error: Employee is null.");
+            return null;
+        }
 
-        // Buscar el empleado existente
+
+        var validation = await _validator.ValidateAsync(employee).ConfigureAwait(false);
+
+        if (!validation.IsValid)
+        {
+            Console.WriteLine("Error: Employee data is invalid.");
+            foreach (var error in validation.Errors)
+            {
+                Console.WriteLine($"- {error.ErrorMessage}");
+            }
+            return null;
+        }
+
+
         var existing = await _employeeRepository.GetByIdAsync(employee.Id)
             .ConfigureAwait(false);
 
         if (existing is null)
-            throw new InvalidOperationException("Employee not found.");
+        {
+            Console.WriteLine("Error: Employee not found.");
+            return null;
+        }
 
-        // Validar duplicado de email
+
         var allEmployees = await _employeeRepository.GetAllAsync().ConfigureAwait(false)
                            ?? Array.Empty<Employee>();
 
@@ -36,10 +60,11 @@ public class UpdateEmployeeUseCaseImpl : IUpdateEmployeeUseCase
                 e.Id != employee.Id &&
                 string.Equals(e.Email, employee.Email, StringComparison.OrdinalIgnoreCase)))
         {
-            throw new InvalidValueException($"An employee with email '{employee.Email}' already exists.");
+            Console.WriteLine($"Error: The email '{employee.Email}' is already registered.");
+            return null;
         }
 
-        // Construir el empleado actualizado
+
         var updatedEmployee = new Employee(
             existing.Id,
             employee.Code,
@@ -61,73 +86,25 @@ public class UpdateEmployeeUseCaseImpl : IUpdateEmployeeUseCase
             existing.IsDeleted
         );
 
-        var savedEmployee = await _employeeRepository.UpdateAsync(updatedEmployee)
-            .ConfigureAwait(false);
 
-        if (savedEmployee is null)
-            throw new InvalidOperationException("Employee could not be updated.");
-
-        return savedEmployee;
-    }
-
-    private static void ValidateEmployee(Employee employee)
-    {
-        if (employee.Id == Guid.Empty)
-            throw new InvalidValueException("Employee id is required.");
-
-        if (string.IsNullOrWhiteSpace(employee.Code))
-            throw new InvalidValueException("Code is required.");
-
-        if (string.IsNullOrWhiteSpace(employee.Name))
-            throw new InvalidValueException("Name is required.");
-
-        if (string.IsNullOrWhiteSpace(employee.Email))
-            throw new InvalidValueException("Email is required.");
-
-        if (!IsValidEmail(employee.Email))
-            throw new InvalidValueException("Invalid email format.");
-
-        if (string.IsNullOrWhiteSpace(employee.PasswordHash))
-            throw new InvalidValueException("Password hash is required.");
-
-        if (string.IsNullOrWhiteSpace(employee.Phone))
-            throw new InvalidValueException("Phone is required.");
-
-        if (string.IsNullOrWhiteSpace(employee.IdentificationNumber))
-            throw new InvalidValueException("Identification number is required.");
-
-        if (employee.IdentificationTypeId == Guid.Empty)
-            throw new InvalidValueException("Identification type is required.");
-
-        if (employee.HeadquartersId == Guid.Empty)
-            throw new InvalidValueException("Headquarters is required.");
-
-        if (employee.GenderId == Guid.Empty)
-            throw new InvalidValueException("Gender is required.");
-
-        if (employee.StatusId == Guid.Empty)
-            throw new InvalidValueException("Status is required.");
-
-        if (employee.AccessLevelId == Guid.Empty)
-            throw new InvalidValueException("Access level is required.");
-
-        if (employee.BirthDate > DateOnly.FromDateTime(DateTime.UtcNow))
-            throw new InvalidValueException("Birth date cannot be in the future.");
-
-        if (employee.HireDate < employee.BirthDate)
-            throw new InvalidValueException("Hire date cannot be before birth date.");
-    }
-
-    private static bool IsValidEmail(string email)
-    {
         try
         {
-            _ = new MailAddress(email);
-            return true;
+            var savedEmployee = await _employeeRepository.UpdateAsync(updatedEmployee)
+                .ConfigureAwait(false);
+
+            if (savedEmployee is null)
+            {
+                Console.WriteLine("Error: Employee could not be updated.");
+                return null;
+            }
+
+            Console.WriteLine($"Success: Employee '{employee.Name}' updated.");
+            return savedEmployee;
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            Console.WriteLine($"Error updating employee: {ex.Message}");
+            return null;
         }
     }
 }
