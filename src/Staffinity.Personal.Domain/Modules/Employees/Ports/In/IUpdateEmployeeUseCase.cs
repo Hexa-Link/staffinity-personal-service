@@ -3,7 +3,7 @@ using Staffinity.Personal.Domain.Modules.Employees.Model;
 
 namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 
-internal interface IUpdateEmployeeUseCase
+public interface IUpdateEmployeeUseCase
 {
     Task<Employee?> UpdateAsync(Employee employee);
 }

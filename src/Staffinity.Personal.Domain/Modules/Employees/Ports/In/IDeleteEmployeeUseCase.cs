@@ -1,8 +1,8 @@
 ﻿using Staffinity.Personal.Domain.Modules.Employees.Model;
 
 namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In;
-    internal interface IDeleteEmployeeUseCase
+    public interface IDeleteEmployeeUseCase
     {
-        Task<bool> DeleteAsync(Employee employee);
+        Task<bool> DeleteAsync(Guid employeeId);
     }
 

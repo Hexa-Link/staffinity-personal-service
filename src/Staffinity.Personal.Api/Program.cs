@@ -1,8 +1,15 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Staffinity.Personal.Application.Modules.Employees.UseCases;
+using Staffinity.Personal.Application.Modules.Employees.Validators;
 using Staffinity.Personal.Application.Modules.Notifications.UseCases;
+using Staffinity.Personal.Domain.Modules.Employees.Model;
+using Staffinity.Personal.Domain.Modules.Employees.Ports.In;
+using Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.In;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
 using Staffinity.Personal.Infrastructure.Persistence;
+using Staffinity.Personal.Infrastructure.Persistence.Employees;
 using Staffinity.Personal.Infrastructure.Persistence.Notifications;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +34,13 @@ builder.Services.AddScoped<IGetNotificationByIdUseCase, GetNotificationByIdUseCa
 builder.Services.AddScoped<ICreateNotificationUseCase, CreateNotificationUseCaseImpl>();
 builder.Services.AddScoped<IUpdateNotificationUseCase, UpdateNotificationUseCaseImpl>();
 builder.Services.AddScoped<IDeleteNotificationUseCase, DeleteNotificationUseCaseImpl>();
-
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IGetAllEmployeesUseCase, GetAllEmployeesUseCaseImpl>();
+builder.Services.AddScoped<IGetEmployeeByIdUseCase, GetEmployeeByIdUseCaseImpl>();
+builder.Services.AddScoped<ICreateEmployeeUseCase, CreateEmployeeUseCaseImpl>();
+builder.Services.AddScoped<IUpdateEmployeeUseCase, UpdateEmployeeUseCaseImpl>();
+builder.Services.AddScoped<IDeleteEmployeeUseCase, DeleteEmployeeUseCaseImpl>();
+builder.Services.AddScoped<IValidator<Employee>, UpdateEmployeeDtoValidator>();
 // Add controllers
 builder.Services.AddControllers();
 
@@ -41,6 +54,7 @@ var app = builder.Build();
 // Mapping Endpoint
 app.MapControllers();
 app.MapHealthChecks("/health");
+app.MapControllers();
 
 // Generate visual documentation
 app.UseSwagger();

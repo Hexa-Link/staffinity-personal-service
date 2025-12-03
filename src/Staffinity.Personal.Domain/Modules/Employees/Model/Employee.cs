@@ -1,19 +1,20 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Staffinity.Personal.Domain.Modules.Employees.Model
 {
     public class Employee
     {
         public Guid Id { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public string Phone { get; set; }
+        public required string Code { get; set; } = string.Empty;
+        public required string Name { get; set; } = string.Empty;
+        public required string Email { get; set; } = string.Empty;
+        public required string PasswordHash { get; set; } = string.Empty;
+        public required string Phone { get; set; } = string.Empty;
         public DateOnly BirthDate { get; set; }
         public DateOnly HireDate { get; set; }
         public Guid IdentificationTypeId { get; set; }
-        public string IdentificationNumber { get; set; }
+        public required string IdentificationNumber { get; set; } = string.Empty;
         public Guid? ManagerId { get; set; }
         public Guid HeadquartersId { get; set; }
         public Guid GenderId { get; set; }
@@ -26,6 +27,7 @@ namespace Staffinity.Personal.Domain.Modules.Employees.Model
         public Employee()
         { }
 
+        [SetsRequiredMembers]
         public Employee(
             string code,
             string name,
@@ -62,6 +64,7 @@ namespace Staffinity.Personal.Domain.Modules.Employees.Model
             IsDeleted = false;
         }
 
+        [SetsRequiredMembers]
         public Employee(
             Guid id,
             string code,
