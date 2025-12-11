@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Vacations\Dto\" />
+    <PackageReference Include="FluentValidation" Version="12.1.0" />
   </ItemGroup>
 
   <PropertyGroup>
