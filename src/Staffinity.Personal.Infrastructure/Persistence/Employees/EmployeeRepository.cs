@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Staffinity.Personal.Domain.Modules.Employees.Exceptions;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
@@ -19,7 +20,9 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Employees
         {
             try
             {
-                var entities = await _dbContext.Employees.ToListAsync();
+                var entities = await _dbContext.Employees
+                    .Where(e => !e.IsDeleted)
+                    .ToListAsync();
                 return EmployeeMapper.ToModelList(entities);
             }
             catch (Exception)
@@ -36,7 +39,7 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Employees
                     .AsNoTracking()
                     .FirstOrDefaultAsync(e => e.Id == employeeId);
 
-                if (entity is null)
+                if (entity is null || entity.IsDeleted)
                 {
                     return null;
                 }
@@ -112,10 +115,12 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Employees
 
                 if (entity is null)
                 {
-                    throw new ResourceNotDeletedException("The employee could not be deleted");
+                    return false;
                 }
 
-                _dbContext.Employees.Remove(entity);
+                entity.IsDeleted = true;
+                entity.UpdatedAt = DateTime.UtcNow;
+
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
