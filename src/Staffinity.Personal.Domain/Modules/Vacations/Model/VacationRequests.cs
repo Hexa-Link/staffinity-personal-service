@@ -30,6 +30,19 @@ public class VacationRequest
         Status = VacationStatus.Pending;
         CreatedAt = DateTime.UtcNow;
     }
+    // Public constructor to load history load
+    public VacationRequest(VacationRequestId id, Guid employeeId, DateTime startDate, DateTime endDate, string reason,
+        VacationStatus status, DateTime createdAt)
+    {
+        Id = id;
+        EmployeeId = employeeId;
+        StartDate = startDate;
+        EndDate = endDate;
+        Reason = reason;
+        Status = status;
+        CreatedAt = createdAt;
+    }
+
 
     // Comportment: Validate dates
     private void ValidateDates(DateTime start, DateTime end)
