@@ -1,131 +1,133 @@
-using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Staffinity.Personal.Domain.Modules.Employees.Exceptions;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
 using Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
-using AppDbContext = Staffinity.Personal.Infrastructure.Persistence.PersonalDbContext;
+using Staffinity.Personal.Domain.Modules.Notifications.Exceptions;
 
-namespace Staffinity.Personal.Infrastructure.Persistence.Employees;
-
-public class EmployeeRepository : IEmployeeRepository
+namespace Staffinity.Personal.Infrastructure.Persistence.Employees
 {
-    private readonly AppDbContext _context;
-    private DbSet<EmployeeEntity> Employees => _context.Set<EmployeeEntity>();
-
-    public EmployeeRepository(AppDbContext context)
+    public class EmployeeRepository : IEmployeeRepository
     {
-        _context = context;
-    }
+        private readonly PersonalDbContext _dbContext;
 
-    public async Task<Employee[]> GetAllAsync()
-    {
-        var entities = await Employees.AsNoTracking().ToArrayAsync();
-        return entities.Select(MapToDomain).ToArray();
-    }
-
-    public async Task<Employee?> GetByIdAsync(Guid id)
-    {
-        var entity = await Employees.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
-        return entity == null ? null : MapToDomain(entity);
-    }
-
-    public async Task<Employee?> CreateAsync(Employee employee)
-    {
-        var entity = MapToEntity(employee);
-        await Employees.AddAsync(entity);
-        await _context.SaveChangesAsync();
-        return MapToDomain(entity);
-    }
-
-    public async Task<Employee?> UpdateAsync(Employee employee)
-    {
-        var entity = await Employees.FirstOrDefaultAsync(e => e.Id == employee.Id);
-        if (entity == null)
+        public EmployeeRepository(PersonalDbContext dbContext)
         {
-            return null;
+            _dbContext = dbContext;
         }
 
-        entity.Code = employee.Code;
-        entity.Name = employee.Name;
-        entity.Email = employee.Email;
-        entity.PasswordHash = employee.PasswordHash;
-        entity.Phone = employee.Phone;
-        entity.BirthDate = employee.BirthDate;
-        entity.HireDate = employee.HireDate;
-        entity.IdentificationTypeId = employee.IdentificationTypeId;
-        entity.IdentificationNumber = employee.IdentificationNumber;
-        entity.ManagerId = employee.ManagerId;
-        entity.HeadquartersId = employee.HeadquartersId;
-        entity.GenderId = employee.GenderId;
-        entity.StatusId = employee.StatusId;
-        entity.AccessLevelId = employee.AccessLevelId;
-        entity.CreatedAt = employee.CreatedAt;
-        entity.UpdatedAt = employee.UpdatedAt;
-        entity.IsDeleted = employee.IsDeleted;
-
-        await _context.SaveChangesAsync();
-        return MapToDomain(entity);
-    }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        var entity = await Employees.FirstOrDefaultAsync(e => e.Id == id);
-        if (entity == null)
+        public async Task<Employee[]> GetAllAsync()
         {
-            return false;
+            try
+            {
+                var entities = await _dbContext.Employees
+                    .Where(e => !e.IsDeleted)
+                    .ToListAsync();
+                return EmployeeMapper.ToModelList(entities);
+            }
+            catch (Exception)
+            {
+                throw new ResourceNotFoundException("No employees were found");
+            }
         }
 
-        Employees.Remove(entity);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-
-    private static Employee MapToDomain(EmployeeEntity entity)
-    {
-        return new Employee(
-            entity.Id,
-            entity.Code,
-            entity.Name,
-            entity.Email,
-            entity.PasswordHash,
-            entity.Phone,
-            entity.BirthDate,
-            entity.HireDate,
-            entity.IdentificationTypeId,
-            entity.IdentificationNumber,
-            entity.ManagerId,
-            entity.HeadquartersId,
-            entity.GenderId,
-            entity.StatusId,
-            entity.AccessLevelId,
-            entity.CreatedAt,
-            entity.UpdatedAt,
-            entity.IsDeleted);
-    }
-
-    private static EmployeeEntity MapToEntity(Employee employee)
-    {
-        return new EmployeeEntity
+        public async Task<Employee?> GetByIdAsync(Guid employeeId)
         {
-            Id = employee.Id,
-            Code = employee.Code,
-            Name = employee.Name,
-            Email = employee.Email,
-            PasswordHash = employee.PasswordHash,
-            Phone = employee.Phone,
-            BirthDate = employee.BirthDate,
-            HireDate = employee.HireDate,
-            IdentificationTypeId = employee.IdentificationTypeId,
-            IdentificationNumber = employee.IdentificationNumber,
-            ManagerId = employee.ManagerId,
-            HeadquartersId = employee.HeadquartersId,
-            GenderId = employee.GenderId,
-            StatusId = employee.StatusId,
-            AccessLevelId = employee.AccessLevelId,
-            CreatedAt = employee.CreatedAt,
-            UpdatedAt = employee.UpdatedAt,
-            IsDeleted = employee.IsDeleted
-        };
+            try
+            {
+                var entity = await _dbContext.Employees
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(e => e.Id == employeeId);
+
+                if (entity is null || entity.IsDeleted)
+                {
+                    return null;
+                }
+
+                return EmployeeMapper.ToModel(entity);
+            }
+            catch (Exception)
+            {
+                throw new ResourceNotFoundException("The employee was not found");
+            }
+        }
+
+        public async Task<Employee?> CreateAsync(Employee employee)
+        {
+            try
+            {
+                var entry = _dbContext.Employees.Add(EmployeeMapper.ToEntity(employee));
+                await _dbContext.SaveChangesAsync();
+                return EmployeeMapper.ToModel(entry.Entity);
+            }
+            catch (Exception)
+            {
+                throw new ResourceNotCreatedException("The employee could not be created");
+            }
+        }
+
+        public async Task<Employee?> UpdateAsync(Employee employee)
+        {
+            try
+            {
+                var entity = await _dbContext.Employees.FindAsync(employee.Id);
+
+                if (entity is null || entity.IsDeleted)
+                {
+                    return null;
+                }
+
+                entity.Code = employee.Code;
+                entity.FirstName = employee.FirstName;
+                entity.MiddleName = employee.MiddleName;
+                entity.LastName = employee.LastName;
+                entity.SecondLastName = employee.SecondLastName;
+                entity.Email = employee.Email;
+                entity.PhoneNumber = employee.PhoneNumber;
+                entity.PasswordHash = employee.PasswordHash ?? entity.PasswordHash;
+                entity.DateOfBirth = employee.DateOfBirth;
+                entity.HireDate = employee.HireDate;
+                entity.IdentificationTypeId = employee.IdentificationTypeId;
+                entity.IdentificationNumber = employee.IdentificationNumber;
+                entity.ManagerId = employee.ManagerId;
+                entity.HeadquartersId = employee.HeadquartersId;
+                entity.GenderId = employee.GenderId;
+                entity.StatusId = employee.StatusId;
+                entity.AccessLevelId = employee.AccessLevelId;
+                entity.UpdatedAt = DateTime.UtcNow;
+                entity.IsDeleted = employee.IsDeleted;
+
+                await _dbContext.SaveChangesAsync();
+
+                return EmployeeMapper.ToModel(entity);
+            }
+            catch (Exception)
+            {
+                throw new ResourceNotUpdatedException("The employee could not be updated");
+            }
+        }
+
+        public async Task<bool> DeleteAsync(Guid Id)
+        {
+            try
+            {
+                var entity = await _dbContext.Employees.FindAsync(Id);
+
+                if (entity is null)
+                {
+                    return false;
+                }
+
+                entity.IsDeleted = true;
+                entity.UpdatedAt = DateTime.UtcNow;
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw new ResourceNotDeletedException("The employee could not be deleted");
+            }
+        }
     }
 }

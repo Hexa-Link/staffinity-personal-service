@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Staffinity.Personal.Application.Modules.Employees.Dtos;
 using Staffinity.Personal.Application.Modules.Employees.UseCases;
 using Staffinity.Personal.Application.Modules.Employees.Validators;
 using Staffinity.Personal.Application.Modules.Notifications.UseCases;
@@ -40,7 +41,9 @@ builder.Services.AddScoped<IGetEmployeeByIdUseCase, GetEmployeeByIdUseCaseImpl>(
 builder.Services.AddScoped<ICreateEmployeeUseCase, CreateEmployeeUseCaseImpl>();
 builder.Services.AddScoped<IUpdateEmployeeUseCase, UpdateEmployeeUseCaseImpl>();
 builder.Services.AddScoped<IDeleteEmployeeUseCase, DeleteEmployeeUseCaseImpl>();
+builder.Services.AddScoped<IValidator<CreateEmployeeRequest>, CreateEmployeeDtoValidator>();
 builder.Services.AddScoped<IValidator<Employee>, UpdateEmployeeDtoValidator>();
+
 // Add controllers
 builder.Services.AddControllers();
 
