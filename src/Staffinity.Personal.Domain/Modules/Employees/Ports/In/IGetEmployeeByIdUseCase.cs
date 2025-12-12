@@ -6,5 +6,5 @@ namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 
 public interface IGetEmployeeByIdUseCase
 {
-    Task<Employee?> GetByIdAsync(Guid employeeId);
+    Task<Employee?> GetByIdAsync(Guid id);
 }

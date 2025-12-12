@@ -65,31 +65,9 @@ public class UpdateEmployeeUseCaseImpl : IUpdateEmployeeUseCase
         }
 
 
-        var updatedEmployee = new Employee(
-            existing.Id,
-            employee.Code,
-            employee.Name,
-            employee.Email,
-            employee.PasswordHash,
-            employee.Phone,
-            employee.BirthDate,
-            employee.HireDate,
-            employee.IdentificationTypeId,
-            employee.IdentificationNumber,
-            employee.ManagerId,
-            employee.HeadquartersId,
-            employee.GenderId,
-            employee.StatusId,
-            employee.AccessLevelId,
-            existing.CreatedAt,
-            DateTimeOffset.UtcNow,
-            existing.IsDeleted
-        );
-
-
         try
         {
-            var savedEmployee = await _employeeRepository.UpdateAsync(updatedEmployee)
+            var savedEmployee = await _employeeRepository.UpdateAsync(employee)
                 .ConfigureAwait(false);
 
             if (savedEmployee is null)
@@ -98,7 +76,7 @@ public class UpdateEmployeeUseCaseImpl : IUpdateEmployeeUseCase
                 return null;
             }
 
-            Console.WriteLine($"Success: Employee '{employee.Name}' updated.");
+            Console.WriteLine($"Success: Employee '{employee.FirstName} {employee.LastName}' updated.");
             return savedEmployee;
         }
         catch (Exception ex)

@@ -7,5 +7,6 @@
     <Project Path="src/Staffinity.Personal.Application/Staffinity.Personal.Application.csproj" />
     <Project Path="src/Staffinity.Personal.Domain/Staffinity.Personal.Domain.csproj" />
     <Project Path="src/Staffinity.Personal.Infrastructure/Staffinity.Personal.Infrastructure.csproj" />
+    <Project Path="src\Staffinity.Personal.Test\Staffinity.Personal.Test.csproj" Type="Classic C#" />
   </Folder>
 </Solution>
