@@ -20,12 +20,14 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 // Register the DbContext
 builder.Services.AddDbContext<PersonalDbContext>(options =>
-    options.UseNpgsql(connectionString,
-        b => b.MigrationsAssembly("Staffinity.Personal.Infrastructure")));
+    options.UseNpgsql(
+        connectionString,
+        b => b.MigrationsAssembly("Staffinity.Personal.Infrastructure")
+    )
+);
 
 // Create the healthchecks
-builder.Services.AddHealthChecks()
-    .AddDbContextCheck<PersonalDbContext>();
+builder.Services.AddHealthChecks().AddDbContextCheck<PersonalDbContext>();
 
 // Register dependencies
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
@@ -41,6 +43,11 @@ builder.Services.AddScoped<ICreateEmployeeUseCase, CreateEmployeeUseCaseImpl>();
 builder.Services.AddScoped<IUpdateEmployeeUseCase, UpdateEmployeeUseCaseImpl>();
 builder.Services.AddScoped<IDeleteEmployeeUseCase, DeleteEmployeeUseCaseImpl>();
 builder.Services.AddScoped<IValidator<Employee>, UpdateEmployeeDtoValidator>();
+builder.Services.AddScoped<IVacationRequestRepository, VacationRequestRepository>();
+builder.Services.AddScoped<ICreateVacationRequestUseCase, CreateVacationRequestUseCase>();
+builder.Services.AddScoped<IApproveVacationUseCase, ApproveVacationUseCase>();
+builder.Services.AddScoped<IRejectVacationUseCase, RejectVacationUseCase>();
+
 // Add controllers
 builder.Services.AddControllers();
 
@@ -64,3 +71,5 @@ app.UseHttpsRedirection();
 
 // Run the application
 app.Run();
+
+public partial class Program { }

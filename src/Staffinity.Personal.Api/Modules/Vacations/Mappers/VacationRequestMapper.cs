@@ -30,9 +30,9 @@ namespace Staffinity.Personal.Api.Modules.Vacations.Mappers
                 EmployeeId = model.EmployeeId,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
-                Status = model.Status.ToString(), // Convertimos Enum a String para el JSON
+                Status = model.Status.ToString(),
                 Reason = model.Reason,
-                CreatedAt = model.CreatedAt
+                CreatedAt = model.CreatedAt,
             };
         }
     }

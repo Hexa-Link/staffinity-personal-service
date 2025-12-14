@@ -15,17 +15,22 @@ namespace Staffinity.Personal.Application.Modules.Vacations.UseCases
 
         public async Task<VacationRequest> CreateAsync(VacationRequest vacationRequest)
         {
-            
             if (vacationRequest == null)
             {
-                throw new ArgumentNullException(nameof(vacationRequest), "Vacation request cannot be null");
+                throw new ArgumentNullException(
+                    nameof(vacationRequest),
+                    "Vacation request cannot be null"
+                );
             }
 
             if (vacationRequest.EmployeeId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(vacationRequest.EmployeeId), "Employee Id cannot be empty");
+                throw new ArgumentNullException(
+                    nameof(vacationRequest.EmployeeId),
+                    "Employee Id cannot be empty"
+                );
             }
-            
+
             await _repository.SaveAsync(vacationRequest);
 
             return vacationRequest;

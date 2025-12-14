@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Staffinity.Personal.Api.Modules.Vacations.Mappers;
 using Staffinity.Personal.Application.Modules.Vacations.Dto;
-using Staffinity.Personal.Application.Modules.Vacations.Dto;
 using Staffinity.Personal.Domain.Modules.Vacations.Exceptions;
 using Staffinity.Personal.Domain.Modules.Vacations.Model;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
@@ -30,7 +29,7 @@ namespace Staffinity.Personal.Api.Modules.Vacations.Controllers
 
         // Create a new vacation request
         [HttpPost]
-        [ProducesResponseType(typeof(VacationRequestResponseDto, StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(VacationRequestResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] CreateVacationRequestDto request)

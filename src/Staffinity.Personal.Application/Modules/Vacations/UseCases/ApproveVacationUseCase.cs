@@ -1,4 +1,4 @@
-using Staffinity.Personal.Domain.Modules.Vacations.Exceptions; // Asegúrate de tener este namespace o donde esté tu Exception
+using Staffinity.Personal.Domain.Modules.Vacations.Exceptions;
 using Staffinity.Personal.Domain.Modules.Vacations.Model;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.Out;
@@ -20,16 +20,18 @@ namespace Staffinity.Personal.Application.Modules.Vacations.UseCases
             {
                 throw new ArgumentNullException(nameof(id), "Vacation Request Id cannot be null");
             }
-            
+
             var request = await _repository.GetByIdAsync(id);
 
             if (request == null)
             {
-                throw new VacationRequestNotFoundException($"Vacation request with id {id.Value} not found.");
+                throw new VacationRequestNotFoundException(
+                    $"Vacation request with id {id.Value} not found."
+                );
             }
-            
+
             request.Approve();
-            
+
             await _repository.UpdateAsync(request);
 
             return true;

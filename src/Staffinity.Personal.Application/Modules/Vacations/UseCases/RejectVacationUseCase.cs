@@ -19,11 +19,13 @@ namespace Staffinity.Personal.Application.Modules.Vacations.UseCases
 
             if (request == null)
             {
-                throw new VacationRequestNotFoundException($"Vacation request with id {id.Value} not found.");
+                throw new VacationRequestNotFoundException(
+                    $"Vacation request with id {id.Value} not found."
+                );
             }
-            
+
             request.Reject();
-            
+
             await _repository.UpdateAsync(request);
 
             return true;

@@ -20,8 +20,8 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
                 entity.StartDate,
                 entity.EndDate,
                 entity.Reason,
-                statusEnum,       // Mantiene el estado real de la BD
-                entity.CreatedAt  // Mantiene la fecha real de creación
+                statusEnum, // Mantiene el estado real de la BD
+                entity.CreatedAt // Mantiene la fecha real de creación
             );
         }
 
