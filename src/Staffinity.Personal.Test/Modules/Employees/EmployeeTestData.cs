@@ -11,7 +11,8 @@ internal static class EmployeeTestData
     public static Employee CreateEmployee(
         Guid? id = null,
         string? email = null,
-        string? code = null)
+        string? code = null
+    )
     {
         var now = DateTime.UtcNow;
         var employeeId = id ?? Guid.NewGuid();
@@ -38,7 +39,7 @@ internal static class EmployeeTestData
             AccessLevelId = Guid.NewGuid(),
             CreatedAt = now,
             UpdatedAt = now,
-            IsDeleted = false
+            IsDeleted = false,
         };
     }
 
@@ -63,7 +64,7 @@ internal static class EmployeeTestData
             AccessLevelId = Guid.NewGuid(),
             MiddleName = "Sample",
             SecondLastName = "Tester",
-            ManagerId = Guid.NewGuid()
+            ManagerId = Guid.NewGuid(),
         };
     }
 
@@ -86,7 +87,7 @@ internal static class EmployeeTestData
             HeadquartersId = Guid.NewGuid(),
             GenderId = Guid.NewGuid(),
             StatusId = Guid.NewGuid(),
-            AccessLevelId = Guid.NewGuid()
+            AccessLevelId = Guid.NewGuid(),
         };
     }
 }

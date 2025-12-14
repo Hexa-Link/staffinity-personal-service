@@ -20,9 +20,7 @@ public class GetAllEmployeesUseCaseImplTests
     {
         var employee = EmployeeTestData.CreateEmployee();
         Employee[]? employees = new[] { employee };
-        _employeeRepository
-            .Setup(r => r.GetAllAsync())
-            .ReturnsAsync(employees);
+        _employeeRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(employees as Employee[]);
 
         var result = await _sut.GetAllAsync();
 
@@ -33,9 +31,7 @@ public class GetAllEmployeesUseCaseImplTests
     [Fact]
     public async Task GetAllAsync_ReturnsEmptyArray_WhenRepositoryReturnsNull()
     {
-        _employeeRepository
-            .Setup(r => r.GetAllAsync())
-            .ReturnsAsync((Employee[]?)null);
+        _employeeRepository.Setup(r => r.GetAllAsync()).ReturnsAsync((Employee[]?)null);
 
         var result = await _sut.GetAllAsync();
 

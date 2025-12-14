@@ -1,26 +1,20 @@
-using Staffinity.Personal.Domain.Modules.Vacations.Exceptions;
 using Staffinity.Personal.Domain.Modules.Vacations.Model;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.Out;
 
 namespace Staffinity.Personal.Application.Modules.Vacations.UseCases
 {
-    public class ApproveVacationUseCase : IApproveVacationUseCase
+    public class RejectVacationUseCase : IRejectVacationUseCase
     {
         private readonly IVacationRequestRepository _repository;
 
-        public ApproveVacationUseCase(IVacationRequestRepository repository)
+        public RejectVacationUseCase(IVacationRequestRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<bool> ApproveAsync(VacationRequestId id)
+        public async Task<bool> RejectAsync(VacationRequestId id)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id), "Vacation Request Id cannot be null");
-            }
-
             var request = await _repository.GetByIdAsync(id);
 
             if (request == null)
@@ -30,7 +24,7 @@ namespace Staffinity.Personal.Application.Modules.Vacations.UseCases
                 );
             }
 
-            request.Approve();
+            request.Reject();
 
             await _repository.UpdateAsync(request);
 
