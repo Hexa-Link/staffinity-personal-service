@@ -59,7 +59,7 @@ public class CreateEmployeeUseCaseImpl : ICreateEmployeeUseCase
                 return null;
             }
 
-            Console.WriteLine($"Success: Employee '{employee.Name}' created.");
+            Console.WriteLine($"Success: Employee '{employee.FirstName} {employee.LastName}' created.");
             return created;
         }
         catch (Exception ex)

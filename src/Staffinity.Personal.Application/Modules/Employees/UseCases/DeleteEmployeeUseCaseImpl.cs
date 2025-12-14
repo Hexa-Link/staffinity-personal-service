@@ -12,13 +12,13 @@ public class DeleteEmployeeUseCaseImpl : IDeleteEmployeeUseCase
         _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
     }
 
-    public async Task<bool> DeleteAsync(Guid employeeId)
+    public async Task<bool> DeleteAsync(Guid Id)
     {
-        if (employeeId == Guid.Empty)
+        if (Id == Guid.Empty)
             {
                 throw new ArgumentNullException("Employee Id cannot be null or empty");
             }
 
-            return await _employeeRepository.DeleteAsync(employeeId);
+            return await _employeeRepository.DeleteAsync(Id);
     }
 }

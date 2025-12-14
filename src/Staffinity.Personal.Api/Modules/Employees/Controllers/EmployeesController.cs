@@ -2,27 +2,27 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Staffinity.Personal.Application.Modules.Employees.Dtos;
-using Staffinity.Personal.Application.Modules.Employees.UseCases;
+using Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
 
-namespace Staffinity.Personal.Api.Controllers;
+namespace Staffinity.Personal.Api.Modules.Employees.Controllers;
 
 [ApiController]
 [Route("employees")]
 public class EmployeesController : ControllerBase
 {
-    private readonly CreateEmployeeUseCaseImpl _createEmployeeUseCase;
-    private readonly GetAllEmployeesUseCaseImpl _getEmployeesUseCase;
-    private readonly GetEmployeeByIdUseCaseImpl _getEmployeeByIdUseCase;
-    private readonly UpdateEmployeeUseCaseImpl _updateEmployeeUseCase;
-    private readonly DeleteEmployeeUseCaseImpl _deleteEmployeeUseCase;
+    private readonly ICreateEmployeeUseCase _createEmployeeUseCase;
+    private readonly IGetAllEmployeesUseCase _getEmployeesUseCase;
+    private readonly IGetEmployeeByIdUseCase _getEmployeeByIdUseCase;
+    private readonly IUpdateEmployeeUseCase _updateEmployeeUseCase;
+    private readonly IDeleteEmployeeUseCase _deleteEmployeeUseCase;
 
     public EmployeesController(
-        CreateEmployeeUseCaseImpl createEmployeeUseCase,
-        GetAllEmployeesUseCaseImpl getEmployeesUseCase,
-        GetEmployeeByIdUseCaseImpl getEmployeeByIdUseCase,
-        UpdateEmployeeUseCaseImpl updateEmployeeUseCase,
-        DeleteEmployeeUseCaseImpl deleteEmployeeUseCase)
+        ICreateEmployeeUseCase createEmployeeUseCase,
+        IGetAllEmployeesUseCase getEmployeesUseCase,
+        IGetEmployeeByIdUseCase getEmployeeByIdUseCase,
+        IUpdateEmployeeUseCase updateEmployeeUseCase,
+        IDeleteEmployeeUseCase deleteEmployeeUseCase)
     {
         _createEmployeeUseCase = createEmployeeUseCase;
         _getEmployeesUseCase = getEmployeesUseCase;
@@ -42,18 +42,22 @@ public class EmployeesController : ControllerBase
         if (!ModelState.IsValid)
             return ValidationProblem(ModelState);
 
+        if (string.IsNullOrWhiteSpace(request.Password))
+            return BadRequest("Password is required.");
+
         var passwordHash = HashPassword(request.Password);
 
-        var now = DateTimeOffset.UtcNow;
-
+        // Usamos el ctor de dominio que genera el Id y CreatedAt/UpdatedAt
         var employee = new Employee(
-            Guid.NewGuid(),
             request.Code,
-            request.Name,
+            request.FirstName,
+            request.MiddleName,
+            request.LastName,
+            request.SecondLastName,
             request.Email,
             passwordHash,
-            request.Phone,
-            request.BirthDate,
+            request.PhoneNumber,
+            request.DateOfBirth,
             request.HireDate,
             request.IdentificationTypeId,
             request.IdentificationNumber,
@@ -61,16 +65,12 @@ public class EmployeesController : ControllerBase
             request.HeadquartersId,
             request.GenderId,
             request.StatusId,
-            request.AccessLevelId,
-            now,       // createdAt
-            now,       // updatedAt (no null)
-            false      // isDeleted
+            request.AccessLevelId
         );
 
         var createdEmployee = await _createEmployeeUseCase.CreateAsync(employee);
 
         if (createdEmployee is null)
-            // No pudo crearse por alguna razón, devuelve 500 (o maneja según tu política)
             return StatusCode(StatusCodes.Status500InternalServerError, "Employee could not be created.");
 
         var response = MapToResponse(createdEmployee);
@@ -86,7 +86,6 @@ public class EmployeesController : ControllerBase
         var responses = employees.Select(MapToResponse).ToArray();
         return Ok(responses);
     }
-
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status200OK)]
@@ -113,38 +112,59 @@ public class EmployeesController : ControllerBase
         if (!ModelState.IsValid)
             return ValidationProblem(ModelState);
 
-        var passwordHash = HashPassword(request.Password);
-        var now = DateTimeOffset.UtcNow;
+        var existing = await _getEmployeeByIdUseCase.GetByIdAsync(id);
+        if (existing is null)
+            return NotFound();
 
-        var employee = new Employee(
+        var code = string.IsNullOrWhiteSpace(request.Code) ? existing.Code : request.Code;
+        var firstName = string.IsNullOrWhiteSpace(request.FirstName) ? existing.FirstName : request.FirstName;
+        var middleName = request.MiddleName ?? existing.MiddleName;
+        var lastName = string.IsNullOrWhiteSpace(request.LastName) ? existing.LastName : request.LastName;
+        var secondLastName = request.SecondLastName ?? existing.SecondLastName;
+        var email = string.IsNullOrWhiteSpace(request.Email) ? existing.Email : request.Email;
+        var phoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? existing.PhoneNumber : request.PhoneNumber;
+        var dateOfBirth = request.DateOfBirth ?? existing.DateOfBirth;
+        var hireDate = request.HireDate ?? existing.HireDate;
+        var identificationTypeId = request.IdentificationTypeId ?? existing.IdentificationTypeId;
+        var identificationNumber = string.IsNullOrWhiteSpace(request.IdentificationNumber)
+            ? existing.IdentificationNumber
+            : request.IdentificationNumber;
+        var managerId = request.ManagerId ?? existing.ManagerId;
+        var headquartersId = request.HeadquartersId ?? existing.HeadquartersId;
+        var genderId = request.GenderId ?? existing.GenderId;
+        var statusId = request.StatusId ?? existing.StatusId;
+        var accessLevelId = request.AccessLevelId ?? existing.AccessLevelId;
+
+        var employeeToUpdate = new Employee(
             id,
-            request.Code,
-            request.Name,
-            request.Email,
-            passwordHash,
-            request.Phone,
-            request.BirthDate,
-            request.HireDate,
-            request.IdentificationTypeId,
-            request.IdentificationNumber,
-            request.ManagerId,
-            request.HeadquartersId,
-            request.GenderId,
-            request.StatusId,
-            request.AccessLevelId,
-            now,  
-            now,   
-            false  
+            code,
+            firstName,
+            middleName,
+            lastName,
+            secondLastName,
+            email,
+            existing.PasswordHash,
+            phoneNumber,
+            dateOfBirth,
+            hireDate,
+            identificationTypeId,
+            identificationNumber,
+            managerId,
+            headquartersId,
+            genderId,
+            statusId,
+            accessLevelId,
+            existing.CreatedAt,
+            existing.IsDeleted
         );
 
-        var updatedEmployee = await _updateEmployeeUseCase.UpdateAsync(employee);
+        var updatedEmployee = await _updateEmployeeUseCase.UpdateAsync(employeeToUpdate);
 
         if (updatedEmployee is null)
             return NotFound();
 
         return Ok(MapToResponse(updatedEmployee));
     }
-
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -159,16 +179,18 @@ public class EmployeesController : ControllerBase
         return NoContent();
     }
 
-
     private static EmployeeResponse MapToResponse(Employee employee)
     {
         return new EmployeeResponse(
             employee.Id,
             employee.Code,
-            employee.Name,
+            employee.FirstName,
+            employee.MiddleName,
+            employee.LastName,
+            employee.SecondLastName,
             employee.Email,
-            employee.Phone,
-            employee.BirthDate,
+            employee.PhoneNumber,
+            employee.DateOfBirth,
             employee.HireDate,
             employee.IdentificationTypeId,
             employee.IdentificationNumber,
