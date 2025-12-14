@@ -52,8 +52,15 @@ jobs:
           host: ${{ secrets.DROPLET_IP }}
           username: root
           key: ${{ secrets.SSH_KEY }}
+          envs: GITHUB_USERNAME,GITHUB_TOKEN,POSTGRES_PASSWORD
           script: |
+            echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
+            export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
             cd /opt/hexalink
             docker-compose pull
             docker-compose up -d
             docker image prune -f
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
