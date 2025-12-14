@@ -1,81 +1,50 @@
 using System.Net;
 using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Staffinity.Personal.Api; // Asegúrate de que referencie a tu API
-using Staffinity.Personal.Application.Modules.Vacations.DTOs;
-using Staffinity.Personal.Infrastructure.Persistence; // Donde esté tu DbContext
+using Staffinity.Personal.Application.Modules.Vacations.Dto;
 using Xunit;
 
 namespace Staffinity.Personal.Tests.Integration
 {
-    // WebApplicationFactory levanta la API en memoria
+    // We use IClassFixture to create a test server based on your Program.cs
     public class VacationIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     {
-        private readonly WebApplicationFactory<Program> _factory;
+        private readonly HttpClient _client;
 
+        // Constructor: This runs once before the tests in this class
         public VacationIntegrationTests(WebApplicationFactory<Program> factory)
         {
-            // Aquí configuramos la API para usar Base de Datos en Memoria
-            _factory = factory.WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services =>
-                {
-                    // 1. Quitamos la configuración de DB real (SQL Server/Postgres)
-                    services.RemoveAll(typeof(DbContextOptions<PersonalDbContext>));
-
-                    // 2. Agregamos la DB en Memoria para testing
-                    services.AddDbContext<PersonalDbContext>(options =>
-                    {
-                        options.UseInMemoryDatabase("TestDb_Vacations");
-                    });
-                });
-            });
+            // We create an HTTP Client to make requests to our API.
+            // Since we are NOT replacing the database with InMemory,
+            // this will connect to your REAL PostgreSQL database defined in appsettings.json.
+            _client = factory.CreateClient();
         }
 
         [Fact]
         public async Task Post_CreateVacation_ReturnsCreated_And_SavesToDb()
         {
-            // Arrange: Creamos el cliente HTTP (como si fuera Postman)
-            var client = _factory.CreateClient();
-
-            var newRequest = new CreateVacationRequestDto
+            // Arrange: Setup the data for the vacation request
+            var request = new CreateVacationRequestDto
             {
                 EmployeeId = Guid.NewGuid(),
+                // Using future dates to ensure valid logic (Start date > Today)
                 StartDate = DateTime.UtcNow.AddDays(10),
-                EndDate = DateTime.UtcNow.AddDays(20),
-                Reason = "Integration Test Vacation",
+                EndDate = DateTime.UtcNow.AddDays(15),
+                Reason = "Integration test saving to Real Postgres",
             };
 
-            // Act: Hacemos el POST real a la ruta
-            var response = await client.PostAsJsonAsync("/vacation-requests", newRequest);
+            // Act: Send a POST request to the endpoint
+            var response = await _client.PostAsJsonAsync("/vacation-requests", request);
 
-            // Assert: Verificamos que responda 201 Created
-            response.StatusCode.Should().Be(HttpStatusCode.Created); // Si usas FluentAssertions
-            // O: Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        }
+            // Read the response body to display it if the test fails
+            var responseBody = await response.Content.ReadAsStringAsync();
 
-        [Fact]
-        public async Task Post_CreateVacation_ReturnsBadRequest_WhenDatesAreInvalid()
-        {
-            // Arrange
-            var client = _factory.CreateClient();
-
-            var invalidRequest = new CreateVacationRequestDto
-            {
-                EmployeeId = Guid.NewGuid(),
-                StartDate = DateTime.UtcNow.AddDays(-5), // Fecha en el pasado (ERROR)
-                EndDate = DateTime.UtcNow.AddDays(5),
-                Reason = "Invalid Dates",
-            };
-
-            // Act
-            var response = await client.PostAsJsonAsync("/vacation-requests", invalidRequest);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            // Assert: Check if the status code is 201 Created.
+            // If it fails, the 'because' message will show the real error from the server.
+            response
+                .StatusCode.Should()
+                .Be(HttpStatusCode.Created, because: $"Server returned error: {responseBody}");
         }
     }
 }

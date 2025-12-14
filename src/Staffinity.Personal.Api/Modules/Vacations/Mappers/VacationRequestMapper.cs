@@ -1,4 +1,4 @@
-using Staffinity.Personal.Application.Modules.Vacations.DTOs;
+using Staffinity.Personal.Application.Modules.Vacations.Dto;
 using Staffinity.Personal.Domain.Modules.Vacations.Model;
 
 namespace Staffinity.Personal.Api.Modules.Vacations.Mappers

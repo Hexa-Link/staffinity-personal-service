@@ -56,9 +56,9 @@ namespace Staffinity.Personal.Api.Modules.Vacations.Controllers
                 // Business Rule: Invalid dates (Start date in past, End before Start)
                 return BadRequest(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, "An internal error occurred while creating the request.");
+                return StatusCode(500, "An error occurred while processing the request.");
             }
         }
 
