@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using System;
+using FluentValidation;
 using Staffinity.Personal.Application.Modules.Employees.Dtos;
 
 namespace Staffinity.Personal.Application.Modules.Employees.Validators
@@ -11,9 +12,13 @@ namespace Staffinity.Personal.Application.Modules.Employees.Validators
                 .NotEmpty()
                 .WithMessage("Code is required.");
 
-            RuleFor(e => e.Name)
+            RuleFor(e => e.FirstName)
                 .NotEmpty()
-                .WithMessage("Name is required.");
+                .WithMessage("First name is required.");
+
+            RuleFor(e => e.LastName)
+                .NotEmpty()
+                .WithMessage("Last name is required.");
 
             RuleFor(e => e.Email)
                 .NotEmpty()
@@ -21,7 +26,8 @@ namespace Staffinity.Personal.Application.Modules.Employees.Validators
                 .EmailAddress()
                 .WithMessage("Email format is invalid.");
 
-            RuleFor(e => e.Phone)
+
+            RuleFor(e => e.PhoneNumber)
                 .NotEmpty()
                 .WithMessage("Phone is required.");
 
@@ -49,13 +55,17 @@ namespace Staffinity.Personal.Application.Modules.Employees.Validators
                 .NotEmpty()
                 .WithMessage("Position (access level) is required.");
 
-            RuleFor(e => e.BirthDate)
-                .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
+            RuleFor(e => e.DateOfBirth)
+                .NotEmpty()
+                .LessThanOrEqualTo(DateTime.UtcNow)
                 .WithMessage("Birth date cannot be in the future.");
 
             RuleFor(e => e.HireDate)
-                .GreaterThan(e => e.BirthDate)
-                .WithMessage("Hire date cannot be earlier than birth date.");
+                .NotEmpty()
+                .GreaterThanOrEqualTo(e => e.DateOfBirth)
+                .WithMessage("Hire date cannot be earlier than birth date.")
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .WithMessage("Hire date cannot be in the future.");
         }
     }
 }

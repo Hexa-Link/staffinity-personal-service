@@ -5,31 +5,37 @@ namespace Staffinity.Personal.Application.Modules.Employees.Dtos;
 public class CreateEmployeeRequest
 {
     [Required]
-    public required string Code { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
 
     [Required]
-    public required string Name { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+
+    public string? MiddleName { get; set; }
+
+    [Required]
+    public string LastName { get; set; } = string.Empty;
+
+    public string? SecondLastName { get; set; }
 
     [Required, EmailAddress]
-    public required string Email { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+
+    public string Password { get; set; } = string.Empty;
 
     [Required]
-    public required string Password { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
 
     [Required]
-    public required string Phone { get; set; } = string.Empty;
+    public DateTime DateOfBirth { get; set; }
 
     [Required]
-    public DateOnly BirthDate { get; set; }
-
-    [Required]
-    public DateOnly HireDate { get; set; }
+    public DateTime HireDate { get; set; }
 
     [Required]
     public Guid IdentificationTypeId { get; set; }
 
     [Required]
-    public required string IdentificationNumber { get; set; } = string.Empty;
+    public string IdentificationNumber { get; set; } = string.Empty;
 
     public Guid? ManagerId { get; set; }
 

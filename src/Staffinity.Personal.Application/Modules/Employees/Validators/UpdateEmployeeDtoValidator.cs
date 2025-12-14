@@ -14,18 +14,18 @@ public class UpdateEmployeeDtoValidator : AbstractValidator<Employee>
         RuleFor(x => x.Code)
             .NotEmpty().WithMessage("Code is required.");
 
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required.");
+        RuleFor(x => x.FirstName)
+            .NotEmpty().WithMessage("First name is required.");
+
+        RuleFor(x => x.LastName)
+            .NotEmpty().WithMessage("Last name is required.");
 
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("Invalid email format.");
 
-        RuleFor(x => x.PasswordHash)
-            .NotEmpty().WithMessage("Password hash is required.");
-
-        RuleFor(x => x.Phone)
-            .NotEmpty().WithMessage("Phone is required.");
+        RuleFor(x => x.PhoneNumber)
+            .NotEmpty().WithMessage("Phone number is required.");
 
         RuleFor(x => x.IdentificationNumber)
             .NotEmpty().WithMessage("Identification number is required.");
@@ -45,12 +45,16 @@ public class UpdateEmployeeDtoValidator : AbstractValidator<Employee>
         RuleFor(x => x.AccessLevelId)
             .NotEmpty().WithMessage("Access level is required.");
 
-        RuleFor(x => x.BirthDate)
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
-            .WithMessage("Birth date cannot be in the future.");
+        RuleFor(x => x.DateOfBirth)
+            .NotEmpty()
+            .LessThanOrEqualTo(DateTime.UtcNow)
+            .WithMessage("Date of birth cannot be in the future.");
 
         RuleFor(x => x.HireDate)
-            .GreaterThanOrEqualTo(x => x.BirthDate)
-            .WithMessage("Hire date cannot be before birth date.");
+            .NotEmpty()
+            .GreaterThanOrEqualTo(x => x.DateOfBirth)
+            .WithMessage("Hire date cannot be before birth date.")
+            .LessThanOrEqualTo(DateTime.UtcNow)
+            .WithMessage("Hire date cannot be in the future.");
     }
 }
