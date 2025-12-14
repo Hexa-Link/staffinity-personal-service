@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Staffinity.Personal.Api.Modules.Vacations.Mappers;
 using Staffinity.Personal.Application.Modules.Vacations.Dto;
+// NOTA: Asegúrate de que tu namespace de DTOs sea igual aquí y en el Mapper (DTOs vs Dto).
+// Si tu carpeta se llama DTOs, cambia la línea de arriba a .DTOs;
+
 using Staffinity.Personal.Domain.Modules.Vacations.Exceptions;
 using Staffinity.Personal.Domain.Modules.Vacations.Model;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.Out;
-using Staffinity.Personal.Infrastructure.Persistence.Vacations;
 
 namespace Staffinity.Personal.Api.Modules.Vacations.Controllers
 {
@@ -20,7 +22,8 @@ namespace Staffinity.Personal.Api.Modules.Vacations.Controllers
         public VacationsRequestsController(
             ICreateVacationRequestUseCase createVacationRequestUseCase,
             IApproveVacationUseCase approveVacationUseCase,
-            IRejectVacationUseCase rejectVacationUseCase)
+            IRejectVacationUseCase rejectVacationUseCase
+        )
         {
             _createVacationRequestUseCase = createVacationRequestUseCase;
             _approveVacationUseCase = approveVacationUseCase;
@@ -29,15 +32,15 @@ namespace Staffinity.Personal.Api.Modules.Vacations.Controllers
 
         // Create a new vacation request
         [HttpPost]
-        [ProducesResponseType(typeof(VacationRequestResponseDto request), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(VacationRequestResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] CreateVacationRequestDto request)
         {
             try
             {
-                // Convert DTO to Domain Entity
-                var entity = VacationRequestMapper.(request);
+                // CORREGIDO: Usando el nombre exacto de tu Mapper
+                var entity = VacationRequestMapper.CreateDtoToModel(request);
 
                 // Call the Use Case
                 var createdEntity = await _createVacationRequestUseCase.CreateAsync(entity);
