@@ -19,20 +19,31 @@ using Staffinity.Personal.Infrastructure.Persistence.Vacations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Get connection string to connect to DB
-// TODO: Replace this for environment variables
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Only configure PostgreSQL if not in testing mode
+// In testing, the WebApplicationFactory will override with InMemory
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    // Get connection string to connect to DB
+    // TODO: Replace this for environment variables
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Register the DbContext
-builder.Services.AddDbContext<PersonalDbContext>(options =>
-    options.UseNpgsql(
-        connectionString,
-        b => b.MigrationsAssembly("Staffinity.Personal.Infrastructure")
-    )
-);
+    // Register the DbContext with PostgreSQL
+    builder.Services.AddDbContext<PersonalDbContext>(options =>
+        options.UseNpgsql(
+            connectionString,
+            b => b.MigrationsAssembly("Staffinity.Personal.Infrastructure")
+        )
+    );
 
-// Create the healthchecks
-builder.Services.AddHealthChecks().AddDbContextCheck<PersonalDbContext>();
+    // Create the healthchecks
+    builder.Services.AddHealthChecks().AddDbContextCheck<PersonalDbContext>();
+}
+else
+{
+    // In testing mode, a placeholder DbContext will be registered by WebApplicationFactory
+    // Register a basic health check service
+    builder.Services.AddHealthChecks();
+}
 
 // Register dependencies
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
