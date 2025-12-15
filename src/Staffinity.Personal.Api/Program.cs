@@ -75,10 +75,19 @@ builder.Services.AddSwaggerGen();
 // Build app with all services
 var app = builder.Build();
 
+// Apply database migrations automatically on startup (like Flyway in Java)
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<PersonalDbContext>();
+        db.Database.Migrate();
+    }
+}
+
 // Mapping Endpoint
 app.MapControllers();
 app.MapHealthChecks("/health");
-app.MapControllers();
 
 // Generate visual documentation
 app.UseSwagger();
