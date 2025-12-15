@@ -18,17 +18,10 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Employees
 
         public async Task<Employee[]> GetAllAsync()
         {
-            try
-            {
-                var entities = await _dbContext.Employees
-                    .Where(e => !e.IsDeleted)
-                    .ToListAsync();
-                return EmployeeMapper.ToModelList(entities);
-            }
-            catch (Exception)
-            {
-                throw new ResourceNotFoundException("No employees were found");
-            }
+            var entities = await _dbContext.Employees
+                .Where(e => !e.IsDeleted)
+                .ToListAsync();
+            return EmployeeMapper.ToModelList(entities);
         }
 
         public async Task<Employee?> GetByIdAsync(Guid employeeId)

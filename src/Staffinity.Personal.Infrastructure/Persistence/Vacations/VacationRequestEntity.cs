@@ -24,11 +24,9 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
 
         [Column("reason")]
         [MaxLength(500, ErrorMessage = "Reason is too long, 500 characters maximum")]
-        public string Reason { get; set; }
+        public string Reason { get; set; } = null!;
 
-        [Column("status")]
-        [Required]
-        public string Status { get; set; } 
+        [Column("status")] [Required] public string Status { get; set; } = null!;
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
