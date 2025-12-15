@@ -4,22 +4,15 @@ using Staffinity.Personal.Domain.Modules.Vacations.Ports.Out;
 
 namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
 {
-    public class VacationRequestRepository : IVacationRequestRepository
+    public class VacationRequestRepository(PersonalDbContext dbContext) : IVacationRequestRepository
     {
-        private readonly PersonalDbContext _dbContext;
-
-        public VacationRequestRepository(PersonalDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
         public async Task SaveAsync(VacationRequest vacationRequest)
         {
             try
             {
                 var entity = VacationRequestMapper.ToEntity(vacationRequest);
-                await _dbContext.Set<VacationRequestEntity>().AddAsync(entity);
-                await _dbContext.SaveChangesAsync();
+                await dbContext.Set<VacationRequestEntity>().AddAsync(entity);
+                await dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -32,8 +25,8 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
             try
             {
                 var entity = VacationRequestMapper.ToEntity(vacationRequest);
-                _dbContext.Set<VacationRequestEntity>().Update(entity);
-                await _dbContext.SaveChangesAsync();
+                dbContext.Set<VacationRequestEntity>().Update(entity);
+                await dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -45,11 +38,11 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
         {
             try
             {
-                var entity = await _dbContext.Set<VacationRequestEntity>().FindAsync(id.Value);
+                var entity = await dbContext.Set<VacationRequestEntity>().FindAsync(id.Value);
                 if (entity != null)
                 {
-                    _dbContext.Set<VacationRequestEntity>().Remove(entity);
-                    await _dbContext.SaveChangesAsync();
+                    dbContext.Set<VacationRequestEntity>().Remove(entity);
+                    await dbContext.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
@@ -62,13 +55,13 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
         {
             try
             {
-                var entity = await _dbContext.Set<VacationRequestEntity>().FindAsync(id.Value);
+                var entity = await dbContext.Set<VacationRequestEntity>().FindAsync(id.Value);
                 
                 if (entity == null) return null;
 
                 return VacationRequestMapper.ToModel(entity);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null; 
             }
@@ -78,7 +71,7 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
         {
             try
             {
-                var entities = await _dbContext.Set<VacationRequestEntity>()
+                var entities = await dbContext.Set<VacationRequestEntity>()
                     .Where(v => v.EmployeeId == employeeId)
                     .ToListAsync();
 
@@ -94,7 +87,7 @@ namespace Staffinity.Personal.Infrastructure.Persistence.Vacations
         {
             try
             {
-                var entities = await _dbContext.Set<VacationRequestEntity>().ToListAsync();
+                var entities = await dbContext.Set<VacationRequestEntity>().ToListAsync();
                 return VacationRequestMapper.ToModelList(entities);
             }
             catch (Exception)
