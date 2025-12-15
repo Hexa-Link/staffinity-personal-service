@@ -1,3 +1,5 @@
+using System.Net.Http;
+using System.Threading;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Staffinity.Personal.Application.Modules.Employees.Dtos;
@@ -5,6 +7,7 @@ using Staffinity.Personal.Application.Modules.Employees.UseCases;
 using Staffinity.Personal.Application.Modules.Employees.Validators;
 using Staffinity.Personal.Application.Modules.Notifications.UseCases;
 using Staffinity.Personal.Application.Modules.Vacations.UseCases;
+using Staffinity.Personal.Domain.Modules.AiIntelligence.Ports.Out;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
 using Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 using Staffinity.Personal.Domain.Modules.Employees.Ports.Out;
@@ -12,6 +15,7 @@ using Staffinity.Personal.Domain.Modules.Notifications.Ports.In;
 using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.Out;
+using Staffinity.Personal.Infrastructure.Adapters.Ai;
 using Staffinity.Personal.Infrastructure.Persistence;
 using Staffinity.Personal.Infrastructure.Persistence.Employees;
 using Staffinity.Personal.Infrastructure.Persistence.Notifications;
@@ -64,6 +68,19 @@ builder.Services.AddScoped<IVacationRequestRepository, VacationRequestRepository
 builder.Services.AddScoped<ICreateVacationRequestUseCase, CreateVacationRequestUseCase>();
 builder.Services.AddScoped<IApproveVacationUseCase, ApproveVacationUseCase>();
 builder.Services.AddScoped<IRejectVacationUseCase, RejectVacationUseCase>();
+
+// AI Gemini Adapter
+DotNetEnv.Env.Load(); // Load environment variables from .env file
+builder.Services.AddSingleton(_ => GeminiOptions.FromEnvironment());
+
+builder.Services.AddHttpClient<IAiModelClient, GeminiAiClient>(
+    (sp, client) =>
+    {
+        var opt = sp.GetRequiredService<GeminiOptions>();
+        client.BaseAddress = opt.BaseUri;
+        client.Timeout = Timeout.InfiniteTimeSpan; // timeout lo controla el CTS dentro del cliente
+    }
+);
 
 // Add controllers
 builder.Services.AddControllers();
