@@ -1,7 +1,6 @@
-using System.Net.Http;
-using System.Threading;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Staffinity.Personal.Application.Modules.AiIntelligence.UseCases;
 using Staffinity.Personal.Application.Modules.Employees.Dtos;
 using Staffinity.Personal.Application.Modules.Employees.UseCases;
 using Staffinity.Personal.Application.Modules.Employees.Validators;
@@ -23,7 +22,7 @@ using Staffinity.Personal.Infrastructure.Persistence.Vacations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Only configure PostgreSQL if not in testing mode
+// Only configure PostgresSQL if not in testing mode
 // In testing, the WebApplicationFactory will override with InMemory
 if (!builder.Environment.IsEnvironment("Testing"))
 {
@@ -31,7 +30,7 @@ if (!builder.Environment.IsEnvironment("Testing"))
     // TODO: Replace this for environment variables
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-    // Register the DbContext with PostgreSQL
+    // Register the DbContext with PostgresSQL
     builder.Services.AddDbContext<PersonalDbContext>(options =>
         options.UseNpgsql(
             connectionString,
@@ -39,7 +38,7 @@ if (!builder.Environment.IsEnvironment("Testing"))
         )
     );
 
-    // Create the healthchecks
+    // Create the health checks
     builder.Services.AddHealthChecks().AddDbContextCheck<PersonalDbContext>();
 }
 else
@@ -68,6 +67,8 @@ builder.Services.AddScoped<IVacationRequestRepository, VacationRequestRepository
 builder.Services.AddScoped<ICreateVacationRequestUseCase, CreateVacationRequestUseCase>();
 builder.Services.AddScoped<IApproveVacationUseCase, ApproveVacationUseCase>();
 builder.Services.AddScoped<IRejectVacationUseCase, RejectVacationUseCase>();
+builder.Services.AddScoped<AskAiWithContextUseCase>();
+
 
 // AI Gemini Adapter
 DotNetEnv.Env.Load(); // Load environment variables from .env file
@@ -78,7 +79,7 @@ builder.Services.AddHttpClient<IAiModelClient, GeminiAiClient>(
     {
         var opt = sp.GetRequiredService<GeminiOptions>();
         client.BaseAddress = opt.BaseUri;
-        client.Timeout = Timeout.InfiniteTimeSpan; // timeout lo controla el CTS dentro del cliente
+        client.Timeout = Timeout.InfiniteTimeSpan; // timeout lo control CTS into client
     }
 );
 
@@ -95,32 +96,30 @@ var app = builder.Build();
 // Apply database migrations automatically on startup (like Flyway in Java)
 if (!app.Environment.IsEnvironment("Testing"))
 {
-    using (var scope = app.Services.CreateScope())
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<PersonalDbContext>();
+
+    // Execute Custom Init Script (Flyway-style)
+    try
     {
-        var db = scope.ServiceProvider.GetRequiredService<PersonalDbContext>();
-
-        // Execute Custom Init Script (Flyway-style)
-        try
+        var scriptPath = Path.Combine(AppContext.BaseDirectory, "Database", "init_schema.sql");
+        if (File.Exists(scriptPath))
         {
-            var scriptPath = Path.Combine(AppContext.BaseDirectory, "Database", "init_schema.sql");
-            if (File.Exists(scriptPath))
-            {
-                var sql = File.ReadAllText(scriptPath);
-                db.Database.ExecuteSqlRaw(sql);
-                Console.WriteLine("Successfully executed init_schema.sql");
-            }
-            else
-            {
-                Console.WriteLine($"Migration script not found at {scriptPath}");
-            }
+            var sql = File.ReadAllText(scriptPath);
+            db.Database.ExecuteSqlRaw(sql);
+            Console.WriteLine("Successfully executed init_schema.sql");
         }
-        catch (Exception ex)
+        else
         {
-            Console.WriteLine($"Error executing migration script: {ex.Message}");
+            Console.WriteLine($"Migration script not found at {scriptPath}");
         }
-
-        // db.Database.Migrate(); // Commented out to avoid conflicts with manual SQL script. Uncomment if using EF Migrations.
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error executing migration script: {ex.Message}");
+    }
+
+    // db.Database.Migrate(); // Commented out to avoid conflicts with manual SQL script. Uncomment if using EF Migrations.
 }
 
 // Mapping Endpoint
