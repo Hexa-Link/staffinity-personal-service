@@ -1,10 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
 
-namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In;
-
-public interface IGetEmployeeByIdUseCase
+namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In
 {
-    Task<Employee?> GetByIdAsync(Guid id);
+    public interface IGetEmployeeByIdUseCase
+    {
+        Task<Employee?> GetByIdAsync(Guid id);
+    }
 }

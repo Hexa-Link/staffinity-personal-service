@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Staffinity.Personal.Domain.Modules.Notifications.Model
 {
     public class Notification

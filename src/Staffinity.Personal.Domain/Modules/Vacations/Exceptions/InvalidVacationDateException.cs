@@ -1,6 +1,7 @@
-namespace Staffinity.Personal.Domain.Modules.Vacations.Exceptions;
-
-public class InvalidVacationDateException : Exception
+namespace Staffinity.Personal.Domain.Modules.Vacations.Exceptions
 {
-    public InvalidVacationDateException(string message) : base(message) {}
+    public class InvalidVacationDateException : Exception
+    {
+        public InvalidVacationDateException(string message) : base(message) {}
+    }
 }

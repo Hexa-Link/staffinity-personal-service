@@ -1,8 +1,9 @@
 using Staffinity.Personal.Domain.Modules.Vacations.Model;
 
-namespace Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
-
-public interface ICancelVacationsUseCase
+namespace Staffinity.Personal.Domain.Modules.Vacations.Ports.In
 {
-    Task<bool> CancelAsync(VacationRequestId id);
+    public interface ICancelVacationsUseCase
+    {
+        Task<bool> CancelAsync(VacationRequestId id);
+    }
 }
