@@ -1,9 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Staffinity.Personal.Application.Modules.Employees.Dtos;
 using Staffinity.Personal.Domain.Modules.Employees.Ports.In;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
+using Staffinity.Personal.Domain.Modules.Auth.Model;
 
 namespace Staffinity.Personal.Api.Modules.Employees.Controllers;
 
@@ -32,6 +34,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = AccessLevelRoles.Admin)]
     [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeRequest request)
@@ -79,6 +82,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = AccessLevelRoles.Admin + "," + AccessLevelRoles.Employee)]
     [ProducesResponseType(typeof(EmployeeResponse[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
     {
