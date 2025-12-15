@@ -94,7 +94,8 @@ INSERT INTO
         access_level_id,
         status_id,
         manager_id,
-        employee_code
+        employee_code,
+        password_hash
     )
 VALUES (
         '3a824e73-ac35-4fcd-99c8-6c7963e4ba4c',
@@ -138,7 +139,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10000'
+        'EMP10000',
+        'default_hash'
     ),
     (
         'bb68c1fb-fd0c-4c1d-a1d4-7cddea66a25e',
@@ -182,7 +184,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10001'
+        'EMP10001',
+        'default_hash'
     ),
     (
         '2b0e0cc6-43e6-4e33-aec9-638f61c9cae4',
@@ -226,7 +229,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10002'
+        'EMP10002',
+        'default_hash'
     ),
     (
         '8ab48564-ed6a-4866-bc75-64275052c44c',
@@ -270,7 +274,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10003'
+        'EMP10003',
+        'default_hash'
     ),
     (
         '4b60acfd-dcbc-4de3-a6b3-d4e8a8564616',
@@ -314,7 +319,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10004'
+        'EMP10004',
+        'default_hash'
     ),
     (
         'f6c85151-899e-4487-902e-e2e81d9d0cfd',
@@ -358,7 +364,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10005'
+        'EMP10005',
+        'default_hash'
     ),
     (
         'b5440d7a-b818-428b-8049-001fd75e1f69',
@@ -402,7 +409,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10006'
+        'EMP10006',
+        'default_hash'
     ),
     (
         'efc95de0-845d-4b67-8683-c3c132fd5bff',
@@ -446,7 +454,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10007'
+        'EMP10007',
+        'default_hash'
     ),
     (
         '61f02dd6-b98b-42d0-a1da-90d414575aad',
@@ -490,7 +499,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10008'
+        'EMP10008',
+        'default_hash'
     ),
     (
         '966a8046-23bf-488f-aa31-5ce0a5af3ac1',
@@ -534,7 +544,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10009'
+        'EMP10009',
+        'default_hash'
     ),
     (
         '42e39dd1-06a3-4848-bc97-f808b76f5cb5',
@@ -578,7 +589,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10010'
+        'EMP10010',
+        'default_hash'
     ),
     (
         'ae59061a-5ac3-477a-aa7a-5d019d525221',
@@ -622,7 +634,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10011'
+        'EMP10011',
+        'default_hash'
     ),
     (
         'd69b9ab9-8b08-481d-8c4d-5fd61ff53b51',
@@ -666,7 +679,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10012'
+        'EMP10012',
+        'default_hash'
     ),
     (
         'bee3a61a-9f0b-469e-acdf-19df15b47b1c',
@@ -710,7 +724,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10013'
+        'EMP10013',
+        'default_hash'
     ),
     (
         '04ebbfb7-db73-4c1c-890d-ee78c5ad7bf0',
@@ -754,7 +769,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10014'
+        'EMP10014',
+        'default_hash'
     ),
     (
         'f741c042-05dc-425c-9c26-661d9a2c6174',
@@ -798,7 +814,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10015'
+        'EMP10015',
+        'default_hash'
     ),
     (
         'bf508636-10e2-4986-8118-c3da68caa0eb',
@@ -842,7 +859,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10016'
+        'EMP10016',
+        'default_hash'
     ),
     (
         '7309d852-1c71-4f1f-8faa-b60612eb23db',
@@ -886,7 +904,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10017'
+        'EMP10017',
+        'default_hash'
     ),
     (
         '4f53b12b-fe1a-4dce-8c38-fa8372f5dffe',
@@ -930,7 +949,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10018'
+        'EMP10018',
+        'default_hash'
     ),
     (
         'e3a20d1a-633c-41b1-aa5c-687fca1ea849',
@@ -974,7 +994,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10019'
+        'EMP10019',
+        'default_hash'
     ),
     (
         '9895f032-5c21-4b19-959b-ca9133c0045e',
@@ -1018,7 +1039,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10020'
+        'EMP10020',
+        'default_hash'
     ),
     (
         '18bb5752-4f65-4a80-92ac-90fc0defc14f',
@@ -1062,7 +1084,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10021'
+        'EMP10021',
+        'default_hash'
     ),
     (
         '4eb18d84-c2f9-4705-90ee-df8e38e4ae1a',
@@ -1106,7 +1129,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10022'
+        'EMP10022',
+        'default_hash'
     ),
     (
         'd72316f5-21b5-44fc-bff2-34fd957131c2',
@@ -1150,7 +1174,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10023'
+        'EMP10023',
+        'default_hash'
     ),
     (
         '5cd15a13-3854-40fe-b029-939db99a3481',
@@ -1194,7 +1219,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10024'
+        'EMP10024',
+        'default_hash'
     ),
     (
         '70c3e444-892e-4209-8a46-2fb9205e1521',
@@ -1238,7 +1264,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10025'
+        'EMP10025',
+        'default_hash'
     ),
     (
         'a35edab8-80ea-47a4-a2ab-4ad33d448f99',
@@ -1282,7 +1309,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10026'
+        'EMP10026',
+        'default_hash'
     ),
     (
         'cd10c9b4-e685-4fdd-a6fd-eeac8254d089',
@@ -1326,7 +1354,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10027'
+        'EMP10027',
+        'default_hash'
     ),
     (
         '0dde516a-e582-4e79-a261-5830a28b4456',
@@ -1370,7 +1399,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10028'
+        'EMP10028',
+        'default_hash'
     ),
     (
         '22fcb604-d993-43de-92b2-f35ea9634385',
@@ -1414,7 +1444,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10029'
+        'EMP10029',
+        'default_hash'
     ),
     (
         '46bcef6c-9f49-4f22-89aa-1f755b57dea4',
@@ -1458,7 +1489,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10030'
+        'EMP10030',
+        'default_hash'
     ),
     (
         '803d4a09-488b-4f79-8163-60076e291e7a',
@@ -1502,7 +1534,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10031'
+        'EMP10031',
+        'default_hash'
     ),
     (
         'ac7c8a30-1f54-44fd-a251-a17dddaba75c',
@@ -1546,7 +1579,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10032'
+        'EMP10032',
+        'default_hash'
     ),
     (
         '3a8febc3-0af3-43a4-9c0c-c0e4fd5b168d',
@@ -1590,7 +1624,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10033'
+        'EMP10033',
+        'default_hash'
     ),
     (
         '1de663a2-2b10-411c-9232-99004ca7edf8',
@@ -1634,7 +1669,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10034'
+        'EMP10034',
+        'default_hash'
     ),
     (
         '7955fa69-9edc-40bf-ad38-09956bb6cfd4',
@@ -1678,7 +1714,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10035'
+        'EMP10035',
+        'default_hash'
     ),
     (
         '41435551-a36a-4d3b-8a4f-5040da653a49',
@@ -1722,7 +1759,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10036'
+        'EMP10036',
+        'default_hash'
     ),
     (
         'a6f0f025-d6d3-4dad-a360-c7ff095eda11',
@@ -1766,7 +1804,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10037'
+        'EMP10037',
+        'default_hash'
     ),
     (
         'f26a5611-432c-4263-bcd8-c454ae0b5c79',
@@ -1810,7 +1849,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10038'
+        'EMP10038',
+        'default_hash'
     ),
     (
         'b2c4454f-9d5b-414f-92c2-99388a7c9a7c',
@@ -1854,7 +1894,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10039'
+        'EMP10039',
+        'default_hash'
     ),
     (
         '9c8e8c0f-e526-42bd-b8f2-80f17eee07b2',
@@ -1898,7 +1939,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10040'
+        'EMP10040',
+        'default_hash'
     ),
     (
         '50f361d7-ec04-4367-9cbf-ba2ac1d82c9c',
@@ -1942,7 +1984,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10041'
+        'EMP10041',
+        'default_hash'
     ),
     (
         '453213f7-1a7f-464b-8104-2b96e6d67a39',
@@ -1986,7 +2029,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10042'
+        'EMP10042',
+        'default_hash'
     ),
     (
         '9f06fef4-c8f2-41ca-ae29-023f6133c188',
@@ -2030,7 +2074,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10043'
+        'EMP10043',
+        'default_hash'
     ),
     (
         '517c54d0-11e6-450f-92ae-12782859d481',
@@ -2074,7 +2119,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10044'
+        'EMP10044',
+        'default_hash'
     ),
     (
         '779412db-d4ac-4877-9569-8b0997eebed1',
@@ -2118,7 +2164,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10045'
+        'EMP10045',
+        'default_hash'
     ),
     (
         '7a88f361-ead6-4f01-959a-b75974113f67',
@@ -2162,7 +2209,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10046'
+        'EMP10046',
+        'default_hash'
     ),
     (
         '5d8f7338-f23b-41d1-8c9e-6673cfd79834',
@@ -2206,7 +2254,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10047'
+        'EMP10047',
+        'default_hash'
     ),
     (
         '12fe531c-ca94-4beb-bece-d66bee2468d8',
@@ -2250,7 +2299,8 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10048'
+        'EMP10048',
+        'default_hash'
     ),
     (
         '631867f1-9ab3-419e-a31b-e69c5dda184e',
@@ -2294,6 +2344,7 @@ VALUES (
                 name = 'Active'
         ),
         NULL,
-        'EMP10049'
+        'EMP10049',
+        'default_hash'
     )
 ON CONFLICT (employee_id) DO NOTHING;
