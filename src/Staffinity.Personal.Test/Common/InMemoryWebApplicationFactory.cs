@@ -16,6 +16,8 @@ public class InMemoryWebApplicationFactory : WebApplicationFactory<Program>
         // Set the environment to Testing
         builder.UseEnvironment("Testing");
 
+        Environment.SetEnvironmentVariable("ConnectionStrings__Default", "Host=localhost;Port=5432;Database=staffinity_personal;Username=hexalink_user;Password=admin;");
+
         builder.ConfigureServices(
             (context, services) =>
             {

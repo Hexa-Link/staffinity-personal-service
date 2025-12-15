@@ -19,6 +19,25 @@ The codebase is organized vertically by feature to minimize merge conflicts:
 
 ---
 
+## Environment configuration
+
+1. Copy `.env.example` to `.env`, fill in the placeholders, and keep the real values local.
+2. `DotNetEnv` reads `.env` when the ASP.NET host starts, so the API can load credentials without checking them into Git.
+3. You can also export the required values directly:
+   ```powershell
+   $env:ConnectionStrings__Default = "Host=localhost;Port=5432;Database=staffinity_personal;Username=youruser;Password=yourpassword;"
+   $env:Jwt__Secret = "your_jwt_secret"
+   dotnet run --project src/Staffinity.Personal.Api
+   ```
+4. On Unix-like shells use `export` instead of PowerShell syntax, and never commit secrets to the repository.
+
+## Running the API securely
+
+1. Provide the database and JWT configuration through environment variables before starting the host.
+2. Run `dotnet run --project src/Staffinity.Personal.Api` from the repository root.
+3. Swagger UI at `/swagger` now exposes bearer authentication; use a valid JWT before calling protected endpoints.
+4. For Docker Compose, override the same environment variables instead of hardcoding secrets.
+
 ## 🚀 How to Run Locally
 
 ### Prerequisites
