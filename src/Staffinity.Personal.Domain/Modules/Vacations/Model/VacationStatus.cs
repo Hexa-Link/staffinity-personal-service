@@ -1,9 +1,10 @@
-namespace Staffinity.Personal.Domain.Modules.Vacations.Model;
-
-public enum VacationStatus
+namespace Staffinity.Personal.Domain.Modules.Vacations.Model
 {
-    Pending,
-    Approved,
-    Rejected,
-    Cancelled
+    public enum VacationStatus
+    {
+        Pending,
+        Approved,
+        Rejected,
+        Cancelled
+    }
 }

@@ -1,8 +1,9 @@
 using Staffinity.Personal.Domain.Modules.Vacations.Model;
 
-namespace Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
-
-public interface IGetEmployeeVacationsUseCase
+namespace Staffinity.Personal.Domain.Modules.Vacations.Ports.In
 {
-    Task<VacationRequest[]> GetByEmployeeIdAsync(Guid employeeId);
+    public interface IGetEmployeeVacationsUseCase
+    {
+        Task<VacationRequest[]> GetByEmployeeIdAsync(Guid employeeId);
+    }
 }
