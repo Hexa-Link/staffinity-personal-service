@@ -1,9 +1,9 @@
-using System.Threading.Tasks;
 using Staffinity.Personal.Domain.Modules.Employees.Model;
 
-namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In;
-
-public interface IUpdateEmployeeUseCase
+namespace Staffinity.Personal.Domain.Modules.Employees.Ports.In
 {
-    Task<Employee?> UpdateAsync(Employee employee);
+    public interface IUpdateEmployeeUseCase
+    {
+        Task<Employee?> UpdateAsync(Employee employee);
+    }
 }

@@ -1,5 +1,3 @@
-using System;
-
 namespace Staffinity.Personal.Domain.Modules.Employees.Model
 {
     public class Employee
