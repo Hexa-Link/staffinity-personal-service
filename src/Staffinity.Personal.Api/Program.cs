@@ -98,7 +98,28 @@ if (!app.Environment.IsEnvironment("Testing"))
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<PersonalDbContext>();
-        db.Database.Migrate();
+
+        // Execute Custom Init Script (Flyway-style)
+        try
+        {
+            var scriptPath = Path.Combine(AppContext.BaseDirectory, "Database", "init_schema.sql");
+            if (File.Exists(scriptPath))
+            {
+                var sql = File.ReadAllText(scriptPath);
+                db.Database.ExecuteSqlRaw(sql);
+                Console.WriteLine("Successfully executed init_schema.sql");
+            }
+            else
+            {
+                Console.WriteLine($"Migration script not found at {scriptPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error executing migration script: {ex.Message}");
+        }
+
+        db.Database.Migrate(); // Commented out to avoid conflicts with manual SQL script. Uncomment if using EF Migrations.
     }
 }
 
