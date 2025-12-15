@@ -119,7 +119,7 @@ if (!app.Environment.IsEnvironment("Testing"))
             Console.WriteLine($"Error executing migration script: {ex.Message}");
         }
 
-        db.Database.Migrate(); // Commented out to avoid conflicts with manual SQL script. Uncomment if using EF Migrations.
+        // db.Database.Migrate(); // Commented out to avoid conflicts with manual SQL script. Uncomment if using EF Migrations.
     }
 }
 
