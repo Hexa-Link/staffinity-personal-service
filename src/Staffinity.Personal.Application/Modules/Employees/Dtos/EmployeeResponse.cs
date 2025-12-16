@@ -14,7 +14,7 @@ public record EmployeeResponse(
     Guid IdentificationTypeId,
     string IdentificationNumber,
     Guid? ManagerId,
-    Guid HeadquartersId,
+    Guid? HeadquartersId,
     Guid GenderId,
     Guid StatusId,
     Guid AccessLevelId);

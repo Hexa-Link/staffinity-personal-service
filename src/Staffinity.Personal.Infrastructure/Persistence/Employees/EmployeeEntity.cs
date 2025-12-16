@@ -72,8 +72,7 @@ public class EmployeeEntity
     public Guid IdentificationTypeId { get; set; }
 
     [Column("headquarters_id")]
-    [Required(ErrorMessage = "Headquarters is required")]
-    public Guid HeadquartersId { get; set; }
+    public Guid? HeadquartersId { get; set; }
 
     [Column("access_level_id")]
     [Required(ErrorMessage = "Access level is required")]
