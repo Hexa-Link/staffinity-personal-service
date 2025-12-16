@@ -17,9 +17,7 @@ public class InMemoryWebApplicationFactory : WebApplicationFactory<Program>
 
         Environment.SetEnvironmentVariable("ConnectionStrings__Default", "Host=localhost;Port=5432;Database=staffinity_personal;Username=hexalink_user;Password=admin;");
 
-        builder.ConfigureServices(
-            (context, services) =>
-        builder.ConfigureServices(services =>
+        builder.ConfigureServices((context, services) =>
         {
             // 1. Replace IIntentDetector
             var intentDetector = services.SingleOrDefault(d => d.ServiceType == typeof(IIntentDetector));
@@ -49,8 +47,6 @@ public class InMemoryWebApplicationFactory : WebApplicationFactory<Program>
             if (dbContextDescriptor != null) services.Remove(dbContextDescriptor);
 
             // Register DbContext with InMemory Database
-            // We use a unique name per instance to ensure isolation if needed, 
-            // though typically for these tests a shared one per factory instance is fine.
             services.AddDbContext<PersonalDbContext>(options =>
             {
                 options.UseInMemoryDatabase("InMemoryDbForTesting");
