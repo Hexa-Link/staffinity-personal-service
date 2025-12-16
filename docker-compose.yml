@@ -1,7 +1,7 @@
 ﻿services:
   # 1. SERVICIO DE BASE DE DATOS (PostgreSQL)
   postgres:
-    image: postgres:18
+    image: postgres:15-alpine
     container_name: staffinity-postgres-db
     restart: unless-stopped
     ports:
@@ -29,13 +29,18 @@
       postgres:
         condition: service_healthy # ¡Espera a que la BD esté verde antes de iniciar!
     ports:
-      - "5000:8080" # Tu PC (localhost:5000) -> Contenedor (8080)
+      - "5001:8080" # Tu PC (localhost:5001) -> Contenedor (8080)
     environment:
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
       # IMPORTANTE: Aquí sobrescribimos la conexión para Docker.
       # Fíjate que el Host es "postgres" (el nombre del servicio de arriba), no localhost.
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=StaffinityPersonalDb;Username=postgres;Password=password123
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=StaffinityPersonalDb;Username=postgres;Password=password123
+      - JWT__ISSUER=staffinity-personal
+      - JWT__AUDIENCE=staffinity-personal
+      - JWT__SECRET=staffinity-docker-secret-123
+      - JWT__EXPIRESMINUTES=60
     
     # Healthcheck: Docker pregunta a tu endpoint C# si todo está bien
     healthcheck:

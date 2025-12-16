@@ -1,12 +1,10 @@
-using System;
 using System.Net;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using Staffinity.Personal.Domain.Modules.AiIntelligence.CoreModels;
 using Staffinity.Personal.Domain.Modules.AiIntelligence.Ports.Out;
 using Staffinity.Personal.Infrastructure.Adapters.Ai;
-using Xunit;
+
+namespace Staffinity.Personal.Test.Modules.AiIntelligence.Controller;
 
 public class GeminiAiClientTests
 {

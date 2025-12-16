@@ -5,9 +5,8 @@ using Staffinity.Personal.Application.Modules.AiIntelligence.UseCases;
 using Staffinity.Personal.Domain.Modules.AiIntelligence.CoreModels;
 using Staffinity.Personal.Domain.Modules.AiIntelligence.Exceptions;
 using Staffinity.Personal.Domain.Modules.AiIntelligence.Ports.Out;
-using Xunit;
 
-namespace Staffinity.Personal.Test.Modules.AiIntelligence;
+namespace Staffinity.Personal.Test.Modules.AiIntelligence.UseCases;
 
 public class AskAiWithContextUseCaseTests
 {
