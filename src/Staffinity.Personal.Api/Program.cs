@@ -24,7 +24,10 @@ using Staffinity.Personal.Domain.Modules.Notifications.Ports.Out;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.In;
 using Staffinity.Personal.Domain.Modules.Vacations.Ports.Out;
 using Staffinity.Personal.Domain.Modules.Auth.Ports.Out;
+using Staffinity.Personal.Application.Modules.AiIntelligence.Ports.Out;
+using Staffinity.Personal.Application.Modules.AiIntelligence.Services;
 using Staffinity.Personal.Infrastructure.Adapters.Ai;
+using Staffinity.Personal.Infrastructure.Adapters.Ai.ContextAdapters;
 using Staffinity.Personal.Infrastructure.Persistence;
 using Staffinity.Personal.Infrastructure.Persistence.Employees;
 using Staffinity.Personal.Infrastructure.Persistence.Notifications;
@@ -149,6 +152,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
+// AI Services Registration
+builder.Services.AddHttpClient<IIntentDetector, LlmIntentDetector>(
+    (sp, client) =>
+    {
+        var opt = sp.GetRequiredService<GeminiOptions>();
+        client.BaseAddress = opt.BaseUri;
+        client.Timeout = TimeSpan.FromSeconds(10);
+    }
+);
+
+builder.Services.AddScoped<IContextBuilder, ContextBuilder>();
+builder.Services.AddSingleton<IStrategyRouter, StrategyRouter>();
+
+// AI Context Adapters
+builder.Services.AddScoped<IEmployeesAiContextPort, EmployeesAiContextAdapter>();
+builder.Services.AddScoped<IVacationsAiContextPort, VacationsAiContextAdapter>();
+builder.Services.AddScoped<INotificationsAiContextPort, NotificationsAiContextAdapter>();
 
 // Add controllers
 builder.Services.AddControllers();
