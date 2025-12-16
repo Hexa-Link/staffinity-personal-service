@@ -1,0 +1,15 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos están actualizados para la restauración.
+  Staffinity.Personal.Domain -> /home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Domain/bin/Debug/net10.0/Staffinity.Personal.Domain.dll
+  Staffinity.Personal.Application -> /home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Application/bin/Debug/net10.0/Staffinity.Personal.Application.dll
+  Staffinity.Personal.Infrastructure -> /home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Infrastructure/bin/Debug/net10.0/Staffinity.Personal.Infrastructure.dll
+  Staffinity.Personal.Api -> /home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Api/bin/Debug/net10.0/Staffinity.Personal.Api.dll
+/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Test/Modules/Employees/UseCases/GetAllEmployeesUseCaseImplTests.cs(34,9): warning CS8620: El argumento de tipo "ISetup<IEmployeeRepository, Task<Employee[]>>" no se puede usar para el parámetro "mock" de tipo "IReturns<IEmployeeRepository, Task<Employee[]?>>" en "IReturnsResult<IEmployeeRepository> ReturnsExtensions.ReturnsAsync<IEmployeeRepository, Employee[]?>(IReturns<IEmployeeRepository, Task<Employee[]?>> mock, Employee[]? value)" debido a las diferencias en la nulabilidad de los tipos de referencia. [/home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Test/Staffinity.Personal.Test.csproj]
+  Staffinity.Personal.Test -> /home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Test/bin/Debug/net10.0/Staffinity.Personal.Test.dll
+Serie de pruebas para /home/Coder/RiderProjects/staffinity-personal-service/src/Staffinity.Personal.Test/bin/Debug/net10.0/Staffinity.Personal.Test.dll (.NETCoreApp,Version=v10.0)
+Versión 18.0.1 (x64) de VSTest
+
+Iniciando la ejecución de pruebas, espere...
+1 archivos de prueba en total coincidieron con el patrón especificado.
+
+Correctas! - Con error:     0, Superado:     4, Omitido:     0, Total:     4, Duración: 307 ms - Staffinity.Personal.Test.dll (net10.0)
