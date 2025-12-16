@@ -129,6 +129,30 @@ if (!app.Environment.IsEnvironment("Testing"))
             var sql = File.ReadAllText(scriptPath);
             db.Database.ExecuteSqlRaw(sql);
             Console.WriteLine("Successfully executed init_schema.sql");
+            var scriptPath = Path.Combine(AppContext.BaseDirectory, "Database", "init_schema.sql");
+            if (File.Exists(scriptPath))
+            {
+                var sql = File.ReadAllText(scriptPath);
+                db.Database.ExecuteSqlRaw(sql);
+                Console.WriteLine("Successfully executed init_schema.sql");
+            }
+            else
+            {
+                Console.WriteLine($"Migration script not found at {scriptPath}");
+            }
+
+            // Execute Seeder
+            var seedPath = Path.Combine(AppContext.BaseDirectory, "Database", "seed_data.sql");
+            if (File.Exists(seedPath))
+            {
+                var seedSql = File.ReadAllText(seedPath);
+                db.Database.ExecuteSqlRaw(seedSql);
+                Console.WriteLine("Successfully executed seed_data.sql");
+            }
+            else
+            {
+                Console.WriteLine($"Seeder script not found at {seedPath}");
+            }
         }
         else
         {
