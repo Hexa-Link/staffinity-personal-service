@@ -33,7 +33,6 @@ public class EmployeesController : ControllerBase
         _deleteEmployeeUseCase = deleteEmployeeUseCase;
     }
 
-    [Authorize(Roles = AccessLevelRoles.Admin)]
     [HttpPost]
     [ProducesResponseType(typeof(EmployeeResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -80,8 +79,7 @@ public class EmployeesController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
-
-    [Authorize(Roles = AccessLevelRoles.Admin + "," + AccessLevelRoles.Employee)]
+    
     [HttpGet]
     [ProducesResponseType(typeof(EmployeeResponse[]), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -183,28 +181,28 @@ public class EmployeesController : ControllerBase
         return NoContent();
     }
 
-    private static EmployeeResponse MapToResponse(Employee employee)
-    {
-        return new EmployeeResponse(
-            employee.Id,
-            employee.Code,
-            employee.FirstName,
-            employee.MiddleName,
-            employee.LastName,
-            employee.SecondLastName,
-            employee.Email,
-            employee.PhoneNumber,
-            employee.DateOfBirth,
-            employee.HireDate,
-            employee.IdentificationTypeId,
-            employee.IdentificationNumber,
-            employee.ManagerId,
-            employee.HeadquartersId,
-            employee.GenderId,
-            employee.StatusId,
-            employee.AccessLevelId
-        );
-    }
+        private static EmployeeResponse MapToResponse(Employee employee)
+        {
+            return new EmployeeResponse(
+                employee.Id,
+                employee.Code,
+                employee.FirstName,
+                employee.MiddleName,
+                employee.LastName,
+                employee.SecondLastName,
+                employee.Email,
+                employee.PhoneNumber,
+                employee.DateOfBirth,
+                employee.HireDate,
+                employee.IdentificationTypeId,
+                employee.IdentificationNumber,
+                employee.ManagerId,
+                employee.HeadquartersId,
+                employee.GenderId,
+                employee.StatusId,
+                employee.AccessLevelId
+            );
+        }
 
     private static string HashPassword(string password)
     {

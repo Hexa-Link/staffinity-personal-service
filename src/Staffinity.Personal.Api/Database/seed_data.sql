@@ -2348,3 +2348,72 @@ VALUES (
         'default_hash'
     )
 ON CONFLICT (employee_id) DO NOTHING;
+
+-- 7. Backend admin account that can authenticate through the API
+INSERT INTO
+    public.employees (
+        employee_id,
+        first_name,
+        middle_name,
+        last_name,
+        second_last_name,
+        email,
+        phone_number,
+        identification_number,
+        date_of_birth,
+        hire_date,
+        gender_id,
+        identification_type_id,
+        headquarters_id,
+        access_level_id,
+        status_id,
+        manager_id,
+        employee_code,
+        password_hash
+    )
+VALUES (
+        'd8f4e1d7-4a3f-4c31-9c2b-1d5f9a4e6c7b',
+        'Backend',
+        NULL,
+        'Admin',
+        NULL,
+        'admin@staffinity.com',
+        '3000000000',
+        '9000000000',
+        '1990-01-01',
+        '2024-01-01',
+        (
+            SELECT gender_id
+            FROM public.genders
+            WHERE
+                name = 'Other'
+        ),
+        (
+            SELECT identification_type_id
+            FROM public.identification_types
+            WHERE
+                name = 'Passport'
+        ),
+        (
+            SELECT headquarters_id
+            FROM public.headquarters
+            WHERE
+                name = 'Bogotケ Main HQ'
+        ),
+        (
+            SELECT access_level_id
+            FROM public.access_levels
+            WHERE
+                name = 'Admin'
+        ),
+        (
+            SELECT employee_status_id
+            FROM public.employee_statuses
+            WHERE
+                name = 'Active'
+        ),
+        NULL,
+        'ADMIN0001',
+        '$2b$12$GlJ4sNJy0QA3D1HdYUcS3ukCJhnCeaSzydwg3emLJxSNtQC6zf8nO'
+    )
+ON CONFLICT (employee_id) DO NOTHING;

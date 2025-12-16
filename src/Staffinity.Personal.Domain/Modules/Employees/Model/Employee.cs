@@ -23,7 +23,7 @@ namespace Staffinity.Personal.Domain.Modules.Employees.Model
         public string IdentificationNumber { get; set; } = string.Empty;
 
         public Guid? ManagerId { get; set; }
-        public Guid HeadquartersId { get; set; }
+        public Guid? HeadquartersId { get; set; }
         public Guid GenderId { get; set; }
         public Guid StatusId { get; set; }
         public Guid AccessLevelId { get; set; }
@@ -49,7 +49,7 @@ namespace Staffinity.Personal.Domain.Modules.Employees.Model
             Guid identificationTypeId,
             string identificationNumber,
             Guid? managerId,
-            Guid headquartersId,
+            Guid? headquartersId,
             Guid genderId,
             Guid statusId,
             Guid accessLevelId)
@@ -98,7 +98,7 @@ namespace Staffinity.Personal.Domain.Modules.Employees.Model
             Guid identificationTypeId,
             string identificationNumber,
             Guid? managerId,
-            Guid headquartersId,
+            Guid? headquartersId,
             Guid genderId,
             Guid statusId,
             Guid accessLevelId,
@@ -149,7 +149,7 @@ namespace Staffinity.Personal.Domain.Modules.Employees.Model
             Guid identificationTypeId,
             string identificationNumber,
             Guid? managerId,
-            Guid headquartersId,
+            Guid? headquartersId,
             Guid genderId,
             Guid statusId,
             Guid accessLevelId,
