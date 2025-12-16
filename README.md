@@ -51,3 +51,26 @@ If you want an n8n workflow to expose the most sold product (for dashboards or a
 4) **Respond to Webhook**: return the `bestSeller` JSON to the caller (or send it to Slack/Email if preferred).
 
 Publish the webhook URL from your n8n instance and secure it (basic auth, secret header, or IP allowlist).***
+
+## Configuration & Secrets
+
+1. Copy `.env.example` to `.env` (the repository already loads it via [DotNetEnv](https://github.com/tonerdo/dotnet-env)).
+2. Fill in the placeholders without committing the real secrets:
+   - `CONNECTIONSTRINGS__DEFAULT` (or `CONNECTIONSTRINGS__DEFAULTCONNECTION`)
+   - `JWT__ISSUER`
+   - `JWT__AUDIENCE`
+   - `JWT__SECRET`
+   - `JWT__EXPIRESMINUTES`
+3. When running locally, powershell/terminal commands like the following keep secrets out of source control:
+   ```powershell
+   setx CONNECTIONSTRINGS__DEFAULT "Host=localhost;Port=5432;Database=staffinity_personal;Username=postgres;Password=change-me"
+   setx JWT__SECRET "your-long-secret-here"
+   ```
+
+> **Note:** Never check real database passwords or JWT secrets into Git. Keep `.env` private and sync `.env.example` only with safe placeholders.
+
+## Running the API securely
+
+1. Populate the `.env` file or configure the same variables at the environment level before starting the app.
+2. Start the API with `dotnet run --project src/Staffinity.Personal.Api/Staffinity.Personal.Api.csproj` or `docker compose up --build`.
+3. Prefer HTTPS for production by providing an `https://` entry in `ASPNETCORE_URLS` so `UseHttpsRedirection()` is enabled automatically.
